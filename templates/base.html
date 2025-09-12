@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}The Corner{% endblock title %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/base.css') }}">
+
+    {% block head %}{% endblock head %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container custom-navbar-container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">The Corner</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_panel') }}">Admin panel</a>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('menu') }}">Меню</a>
+                </li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('my_coupons') }}">Мої купони</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('basket') }}">Кошик</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile') }}">Профіль</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Приєднатися</a>
+                    </li>
+                {% endif %}
+            </ul>
+            </div>
+        </div>
+    </nav>
+
+    <a href="{{ previous_url }}" class="btn-back">Назад</a>
+    {% block content %}{% endblock %}
+
+    <footer class="custom-footer text-center py-3 mt-auto">
+        &copy; {{ current_year }} The Corner
+        <br>
+        Всі фотографії взяті з <a href="https://www.vecteezy.com/free-vector/serving">Serving Vectors by Vecteezy</a>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

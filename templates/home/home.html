@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/home.css') }}">
+{% endblock %}
+
+{% block title %}Головна - The Corner{% endblock %}
+
+{% block content %}
+    <div class="container-fluid py-3", id="upper_conatiner">
+        <p>Вітаю на сторінці для тих, хто НЕ ввійшов!</p>
+        <img src="{{ url_for('static', filename='images/cup_of_coffee.png') }}" alt="Cup of coffee", class="rounded float-end">
+    </div>
+{% endblock %}

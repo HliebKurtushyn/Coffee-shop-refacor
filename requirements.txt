@@ -1,0 +1,7 @@
+Flask
+Flask-Login
+SQLAlchemy
+bcrypt
+psycopg2-binary
+python-dotenv
+qrcode

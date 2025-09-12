@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}The Corner{% endblock title %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/simple_base.css') }}">
+
+    {% block head %}{% endblock head %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <a href="{{ previous_page }}" class="btn-back">Назад</a>
+    {% block content %}{% endblock %}
+
+    <footer class="custom-footer text-center py-3 mt-auto">
+        &copy; {{ current_year }} The Corner
+        <br>
+        Всі фотографії взяті з <a href="https://www.vecteezy.com/free-vector/serving">Serving Vectors by Vecteezy</a>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
