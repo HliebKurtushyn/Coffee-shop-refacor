@@ -1,0 +1,23 @@
+{% extends 'base_simple.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/login_reg.css') }}">
+{% endblock %}
+
+{% block title %}Вхід - The Corner{% endblock %}
+
+{% block content %}
+    <div class="bg-circle bg-circle1"></div>
+    <div class="bg-circle bg-circle2"></div>
+    <div class="bg-circle bg-circle3"></div>
+
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <form action="{{ url_for('login_post') }}" method="post" class="login-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="text" name="username" placeholder="Юзернейм" class="form-control mb-3 custom-input" required>
+            <input type="password" name="password" placeholder="Пароль" class="form-control mb-3 custom-input" required>
+            <button type="submit" class="btn btn-primary w-100 rounded-pill">Увійти</button>
+        </form>
+        <p class="text-center mt-3">Ще не маєте акаунту? <a href="{{ url_for('register') }}">Зробіть його зараз!</a></p>
+    </div>
+{% endblock %}

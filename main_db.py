@@ -8,10 +8,20 @@ from flask_login import UserMixin
 from dotenv import load_dotenv
 import bcrypt  # pip install bcrypt
 import os
+import logging
+
+from logger_setup import setup_logger
+
+
+db_logger = setup_logger("main_db", "app_db.log", level_file=logging.WARNING, level_console=logging.WARNING)
+logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
+logging.getLogger("sqlalchemy.dialects").setLevel(logging.WARNING)
 
 load_dotenv()
 
-engine = create_engine(os.getenv('DATABASE_URL'), echo=True)
+
+engine = create_engine(os.getenv('DATABASE_URL'))
 Session = sessionmaker(bind=engine)
 
 
@@ -27,7 +37,7 @@ class Users(Base, UserMixin):
     __tablename__ = "users"
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    nickname: Mapped[str] = mapped_column(String(100), unique=True)
+    username: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(200))
     email: Mapped[str] = mapped_column(String(50), unique=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)

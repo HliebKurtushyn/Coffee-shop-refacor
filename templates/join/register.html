@@ -1,0 +1,24 @@
+{% extends 'base_simple.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/login_reg.css') }}">
+{% endblock %}
+
+{% block title %}Реєстрація - The Corner{% endblock %}
+
+{% block content %}
+    <div class="bg-circle bg-circle1"></div>
+    <div class="bg-circle bg-circle2"></div>
+    <div class="bg-circle bg-circle3"></div>
+
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <form action="{{ url_for('resiter_post') }}" method="post" autocomplete="off" class="login-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="text" name="username" placeholder="Юзернейм" class="form-control mb-3 custom-input" required>
+            <input type="email" name="email" placeholder="Ел-Пошта" autocomplete="off" class="form-control mb-3 custom-input" required>
+            <input type="password" name="password" placeholder="Пароль" autocomplete="off" class="form-control mb-3 custom-input" required>
+            <button type="submit" class="btn btn-primary w-100 rounded-pill">Зареєструватися</button>
+        </form>
+        <p class="text-center mt-3">Вже маєте акаунт? <a href="{{ url_for('login') }}">Ввійдіть!</a></p>
+    </div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}The Corner - Menu{% endblock title %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/menu.css') }}">
+{% endblock head %}
+
+{% block content %}
+
+   {% if offers %}
+        <section class="offers-section">
+            {% for offer in offers %}
+                <div class="offer-banner">
+                    {% if offer.menu.file_name %}
+                        <img src="/static/menu/{{ offer.menu.file_name }}" alt="{{ offer.menu.name }}" class="offer-img">
+                    {% endif %}
+                    <div class="offer-text">
+                        <h2>{{ offer.menu.name }}</h2>
+                        <p>{{ offer.menu.description }}</p>
+                        <p class="exp">Закінчується: {{ offer.expiration_date.strftime('%Y-%m-%d') }}</p>
+                        <p class="price">
+                            <span class="old-price">{{ offer.menu.price }}₴</span>
+                            <span class="new-price">{{ offer.menu.price - (offer.menu.price * offer.discount / 100) | round(0) }}₴</span>
+                            <span class="discount">-{{ offer.discount }}%</span>
+                        </p>
+
+                        <a class="dish-btn" href="/position/{{ offer.menu.name }}">Оглянути</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <div class="section-divider">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <path fill="#000000" fill-opacity="1" d="M0,128L1440,160L1440,0L0,0Z"></path>
+    </svg>
+    </div>
+
+    <section class="menu-section">
+        <img src="{{ url_for('static', filename='images/coffee1.png') }}" class="bg-coffee bg-coffee1">
+        <img src="{{ url_for('static', filename='images/coffee2.png') }}" class="bg-coffee bg-coffee2">
+        <img src="{{ url_for('static', filename='images/coffee3.png') }}" class="bg-coffee bg-coffee3">
+        <img src="{{ url_for('static', filename='images/coffee4.png') }}" class="bg-coffee bg-coffee4">
+
+        <div class="menu-grid">
+            {% for position in all_positions %}
+                <div class="dish-card">
+                    <div class="dish-img-wrapper">
+                        <img class="dish-img" src="/static/menu/{{ position.file_name }}" alt="{{ position.name }}">
+                    </div>
+                    <div class="dish-info">
+                        <h3 class="dish-name">{{ position.name }}</h3>
+                        
+                        {% if position.special_offers %}
+                            {% for offer in position.special_offers %}
+                                {% if offer.active %}
+                                    <p class="small-price">
+                                        <span class="old-price">{{position.price}}₴</span>
+                                        <span class="new-price">{{ (position.price - (position.price * offer.discount / 100)) | round(0) }}₴<small class="dish-small_info">/порція</small></span>
+                                        <span class="discount">-{{ offer.discount }}%</span>
+                                    </p>
+                                
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="dish-price">{{ position.price }}₴<small class="dish-small_info">/порція</small></p>
+                        {% endif %}
+                        
+                        <a class="dish-btn" href="/position/{{ position.name }}">Оглянути</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

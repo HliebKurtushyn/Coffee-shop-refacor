@@ -12,7 +12,25 @@
     {% block head %}{% endblock head %}
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <a href="{{ previous_page }}" class="btn-back">Назад</a>
+    {% block flash_message %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endblock %}
+
+    {% block btn_back %}
+        <a href="{{ url_for('home') }}" class="btn-back">Назад</a>
+    {% endblock %}
+    
     {% block content %}{% endblock %}
 
     <footer class="custom-footer text-center py-3 mt-auto">

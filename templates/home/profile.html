@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/profile.css') }}">
+{% endblock %}
+
+{% block title %}Профіль - The Corner{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-avatar">
+        {{ user.username[0]|upper }}
+    </div>
+
+    <div class="profile-title">Профіль</div>
+
+    <div class="profile-info">
+        <p><strong>Юзернейм:</strong> {{ user.username }}</p>
+        <p><strong>Електронна пошта:</strong> {{ user.email }}</p>
+    </div>
+
+    <form action="{{ url_for('profile_logout') }}" method="post" class="logout-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="logout-btn">Вийти з акаунту</button>
+    </form>
+</div>
+{% endblock %}
