@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/basket.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="basket-container">
+    <h1>Ваш кошик</h1>
+    {% if not basket %}
+        <p>Ваш кошик порожній.</p>
+    {% else %}
+    
+    {% block flash_message %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endblock %}
+
+    {% for item in basket %}
+    <div class="basket-item">
+        <img src="/static/menu/{{item.menu.file_name}}" alt="{{item.menu.name}}">
+        <div class="item-info">
+            <h2>{{ item.menu.name }}</h2>
+            <p>{{ item.menu.ingredients }}</p>
+        </div>
+        <div class="item-controls">
+            {% if item.menu.special_offers %}
+                {% for offer in item.menu.special_offers %}
+                    {% if offer.active %}
+                    <p class="price">
+                        <span class="old-price">{{item.menu.price}}₴</span>
+                        <span class="new-price">{{ (item.menu.price - (item.menu.price * offer.discount / 100)) | round(0) }}₴</span>
+                        <span class="discount">-{{ offer.discount }}%</span>
+                    </p>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p class="price">{{item.menu.price}}₴</p>
+            {% endif %}
+
+            <!-- Кнопки зміни кількості -->
+            <form action="{{ url_for('update_quantity') }}" method="post" class="quantity-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <div class="quantity-group">
+                    <button type="submit" name="quantity" value="{{ item.quantity - 1 }}" class="quantity-btn" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
+                    <span class="quantity-number">{{ item.quantity }}</span>
+                    <button type="submit" name="quantity" value="{{ item.quantity + 1 }}" class="quantity-btn" {% if item.quantity >= 10 %}disabled{% endif %}>+</button>
+                </div>
+            </form>
+
+            <!-- Видалення товару -->
+            <form action="{{ url_for('remove_from_basket') }}" method="post" style="margin-top: 8px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <button type="submit" class="btn remove-btn">Видалити</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+        
+        <!-- ФОРМА 3: Оформлення замовлення -->
+        <a href="{{ url_for('checkout') }}" class="btn checkout-btn">Оформити замовлення</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block title %}Кошик - The Corner{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base_simple.html' %}
+
+{% block title %}{{ position.name }} - The Corner{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/position.css') }}">
+{% endblock head %}
+
+{% block btn_back %}
+        <a href="{{ url_for('menu') }}" class="btn-back">Назад</a>
+{% endblock %}
+
+{% block content %}
+<div class="position-container">
+    <img src="{{ url_for('static', filename='images/coffee1.png') }}" class="position-bg-coffee position-bg1">
+    <img src="{{ url_for('static', filename='images/coffee2.png') }}" class="position-bg-coffee position-bg2">
+    <img src="{{ url_for('static', filename='images/coffee3.png') }}" class="position-bg-coffee position-bg3">
+    <img src="{{ url_for('static', filename='images/coffee4.png') }}" class="position-bg-coffee position-bg4">
+
+    <div class="position-photo">
+        <img src="{{ url_for('static', filename='menu/{{position.file_name}}') }}" alt="{{position.name}}">
+    </div>
+
+    <div class="position-buy">
+        <h1>{{position.name}} ({{position.weight}}гр)</h1>
+        {% for offer in position.special_offers %}
+            {% if offer.active %}
+                <p class="offer-banner">Спеціальна пропозиція! Знижка {{ offer.discount }}% до {{ offer.expiration_date.strftime('%Y-%m-%d') }}</p>
+                <p class="price">
+                    <span class="old-price">{{position.price}}₴</span>
+                    <span class="new-price">{{ (position.price - (position.price * offer.discount / 100)) | round(0) }}₴</span>
+                    <span class="discount">-{{ offer.discount }}%</span>
+                </p>
+            {% endif %}
+        {% else %}
+            <p class="price">{{position.price}}₴</p>
+        {% endfor %}
+
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="name" value="{{position.name}}">
+            <div class="form-row">
+                <label for="num">Кількість:</label>
+                <input type="number" id="num" name="quantity" min="1" value="1">
+            </div>
+            <input type="submit" value="Додати до кошика">
+            <a href="{{ url_for('basket') }}" class="btn-link">Переглянути кошик</a>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% set category, message = messages[0] %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endif %}
+            {% endwith %}
+        </form>
+    </div>
+
+</div>
+
+<!-- Блок додаткової інформації під фото -->
+<div class="position-info">
+    <p><strong>Інгредієнти:</strong> {{position.ingredients}}</p>
+    <p><strong>Опис:</strong></p>
+    <pre>{{position.description}}</pre>
+    <p class="tip">*Важливо: Після оплати замовлення вам буде в "Мої купони" надіслано QR-код, який ви маєте показати в кав'ярні де на місці вам зроблять ваше замовлення. ЦЕ НЕ БРОНЮВАННЯ АБО ЗАМОВЛЕННЯ НАПЕРЕД!</p>
+</div>
+
+{% endblock %}
