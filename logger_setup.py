@@ -1,6 +1,7 @@
 import logging
 
 def setup_logger(name, log_file, level_file=logging.INFO, level_console=logging.WARNING):
+    '''Function to set up a logger with both file and console handlers.'''
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 

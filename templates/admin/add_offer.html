@@ -1,0 +1,67 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}<title>Add offer - Admin Panel - The Corner</title>{% endblock %}
+
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/admin_form.css') }}">
+{% endblock head %}
+
+{% block content %}
+    <h2>Додавання нової пропозиції</h2>
+    <form method="post" action="{{ url_for('add_offer_post') }}" enctype="multipart/form-data" class="admin-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <select name="menu_id" required>
+            {% for position in all_positions %}
+                <option value="{{ position.id }}">{{ position.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="number" name="discount" placeholder="%" step="0.01" required>
+        <input type="datetime-local" name="expiration_date" required placeholder="Термін дії">
+
+        <input type="checkbox" name="active" placeholder="Активна" checked>
+        <small>Active</small>
+
+        <br>
+        
+        <button type="submit" class="btn-coupon-details">Додати пропозицію</button>
+    </form>
+
+    <h2>Деактивація пропозиції</h2>
+    <form action="{{ url_for('deactivate_offer') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <select name="offer_id" required>
+                {% for offer in active_offers %}
+                    <option value="{{ offer.id }}">{{ offer.menu.name }}</option>
+                {% endfor %}
+            </select required>
+            
+            <input type="checkbox" name="confirm_delete" required>
+            <span>Підтвердити</span>
+
+            <button type="submit">Деактивувати</button>
+    </form>
+
+    <h2>Активація пропозиції</h2>
+    <form action="{{ url_for('activate_offer') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <select name="offer_id" required>
+                {% for offer in deactivated_offers %}
+                    <option value="{{ offer.id }}">{{ offer.menu.name }}</option>
+                {% endfor %}
+            </select required>
+
+            <button type="submit">Активувати</button>
+    </form>
+
+    <h2>Видалити всі деактивовані пропозиції</h2>
+    <form action="{{ url_for('delete_offers') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <input type="checkbox" name="confirm_delete" required>
+            <span>Ви впевнені?</span>
+
+            <button type="submit">Видалити</button>
+    </form>
+{% endblock %}

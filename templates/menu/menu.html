@@ -13,7 +13,7 @@
             {% for offer in offers %}
                 <div class="offer-banner">
                     {% if offer.menu.file_name %}
-                        <img src="{{ url_for('static', filename='menu/{{ offer.menu.file_name }}') }}" alt="{{ offer.menu.name }}" class="offer-img">
+                        <img src="{{ url_for('static', filename='menu/offer.menu.file_name') }}" alt="{{ offer.menu.name }}" class="offer-img">
                     {% endif %}
                     <div class="offer-text">
                         <h2>{{ offer.menu.name }}</h2>
@@ -48,7 +48,7 @@
             {% for position in all_positions %}
                 <div class="dish-card">
                     <div class="dish-img-wrapper">
-                        <img class="dish-img" src="{{ url_for('static', filename='menu/{{ position.file_name }}') }}" alt="{{ position.name }}">
+                        <img class="dish-img" src="{{ url_for('static', filename='menu/position.file_name') }}" alt="{{ position.name }}">
                     </div>
                     <div class="dish-info">
                         <h3 class="dish-name">{{ position.name }}</h3>
@@ -68,7 +68,7 @@
                             <p class="dish-price">{{ position.price }}₴<small class="dish-small_info">/порція</small></p>
                         {% endif %}
                         
-                        <a class="dish-btn" href="/position/{{ position.name }}">Оглянути</a>
+                        <a class="dish-btn" href="{{ url_for('position', name=position.name) }}">Оглянути</a>
                     </div>
                 </div>
             {% endfor %}

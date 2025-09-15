@@ -1,12 +1,11 @@
-{% extends 'base_simple.html' %}
+{% extends 'base_admin.html' %}
 
-{% block title %}Admin Panel{% endblock %}
+{% block title %}<title>Admin Panel - The Corner</title>{% endblock %}
 
 {% block content %}
     <h1>Admin Panel</h1>
-    <!-- <a href="{{ url_for('add_position') }}">Add position</a>
-    <a href="{{ url_for('add_offer') }}">Add offer</a> -->
-    <a href="#">Reservation check</a>
+    <a href="{{ url_for('add_position') }}">Add position</a>
+    <a href="{{ url_for('add_offer') }}">Add offer</a>
     <br>
     {{ users|length }} users registered.
     <table>

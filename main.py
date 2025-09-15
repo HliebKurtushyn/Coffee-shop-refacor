@@ -9,13 +9,12 @@ from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user, LoginManager
 
-from main_db import Basket, Coupons, Menu, Session, SpecialOffer, Users, func, joinedload
+from main_db import Menu, Basket, Coupons, SpecialOffer, Session, SpecialOffer, Users, func, joinedload
 from logger_setup import setup_logger
 
 # Чеклист щоб адаптувати сайт під зміни в коді:
 # - Замінив nickname -> username: Адаптувати всі шаблони і форми (хто взагалі використовує nickname?)
 # - Додати підтримку flash повідомлень в УСІ шаблони
-# - Адаптувати всі функції які використовують меню, під використання функції get_menu
 # - Перевірити всі форми на наявність CSRF токена
 # - Вирізати previous_url звідусіль, де він не потрібен
 
@@ -59,7 +58,7 @@ def load_user(user_id):
         if user:
             return user
 
-# Захищаємо від XSS атак
+# Захист від XSS атак
 @app.after_request
 def apply_csp(response):
     nonce = secrets.token_urlsafe(16)
@@ -74,14 +73,6 @@ def apply_csp(response):
     response.headers["Content-Security-Policy"] = csp
     response.set_cookie("nonce", nonce)
     return response
-
-# Робить меню доступним повсюди за запитом до цієї функції
-@app.context_processor
-def utility_processor():
-    def get_menu(menu_id):
-        with Session() as db_session:
-            return db_session.query(Menu).filter_by(id=menu_id).first()
-    return dict(get_menu=get_menu)
 
 
 # ===== ГОЛОВНА СТОРІНКА =====
@@ -278,7 +269,7 @@ def update_quantity():
     quantity = request.form.get("quantity")
 
     with Session() as db_session:
-        basket_item = db_session.query(Basket).filter_by(id=item_id, user_id=current_user.id).first()
+        basket_item = db_session.query(Basket).filter_by(id=item_id, user_id=current_user.id).options(joinedload(Basket.menu)).first()
         if not basket_item:
             return "Елемент кошика не знайдено!", 404
 
@@ -306,7 +297,7 @@ def remove_from_basket():
     item_id = request.form.get("item_id")
 
     with Session() as db_session:
-        basket_item = db_session.query(Basket).filter_by(id=item_id, user_id=current_user.id).first()
+        basket_item = db_session.query(Basket).filter_by(id=item_id, user_id=current_user.id).options(joinedload(Basket.menu)).first()
 
         if not basket_item:
             return "Елемент кошика не знайдено!", 404
@@ -324,7 +315,7 @@ def checkout_page():
     with Session() as db_session:
         basket = db_session.query(Basket).filter_by(user_id=current_user.id).all()
 
-        return render_template("orders/checkout_page.html", 
+        return render_template("orders/checkout.html", 
                             csrf_token=session["csrf_token"], 
                             basket=basket,
                             total_quantity=sum(item.quantity for item in basket),
@@ -392,22 +383,32 @@ def checkout():
 def my_coupons():
     with Session() as db_session:
         coupons = db_session.query(Coupons).filter_by(user_id=current_user.id).all()
-    
-        return render_template("orders/my_coupons.html", coupons=coupons, user=current_user)
+        
+        all_menu_ids = set()
+        for coupon in coupons:
+            all_menu_ids.update([int(menu_id) for menu_id in coupon.order_items.keys()])
+
+        menu_items = {}
+        if all_menu_ids:
+            menus = db_session.query(Menu).filter(Menu.id.in_(all_menu_ids)).all()
+            menu_items = {str(menu.id): menu.name for menu in menus}
+        
+        return render_template("orders/my_coupons.html", 
+                             coupons=coupons, 
+                             menu_items=menu_items,
+                             user=current_user)
     
 
 @app.route("/coupon/<int:coupon_id>")
 @login_required
 def coupon(coupon_id):
-    previous_url = session.get("previous_url") or url_for("my_coupons")
-    
     with Session() as db_session:
         order = db_session.query(Coupons).filter_by(id=coupon_id, user_id=current_user.id).first()
         if not order:
             return "Купон не знайдено!", 404
 
         return render_template("orders/coupon.html", order=order,
-                            previous_url=previous_url, user=current_user)
+                                user=current_user)
     
 
 # ===== АДМІНІСТРУВАННЯ =====
@@ -416,33 +417,97 @@ def coupon(coupon_id):
 def admin():
     if not current_user.is_admin:
         return "Шо, адміном себе представляєш?", 418
-
-    previous_url = session.get("previous_url") or url_for("home")
     
     with Session() as db_session:
         users = db_session.query(Users).all()
-    return render_template("admin/admin.html", users=users,
-                         previous_url=previous_url)
+
+    return render_template("admin/admin.html", users=users)
+
+# = ФУНКЦІЇ ДЛЯ КЕРУВАННЯ ОБ'ЄКТАМИ =
+# *Для уникнення дублювання коду
+def toggle_object_status(object_class, object_id, is_active, success_message, redirect_endpoint):
+    if not current_user.is_admin:
+        return "Access denied!", 403
+    
+    if request.form.get("csrf_token") != session["csrf_token"]:
+        return "Request blocked!", 403
+    
+    with Session() as db_session:
+        object = db_session.query(object_class).filter_by(id=object_id).first()
+        if not object:
+            return f"{object_class.__name__} not found!", 404
+        
+        object.active = is_active
+        db_session.commit()
+        flash(success_message, "success")
+        return redirect(url_for(redirect_endpoint))
 
 
-@app.route("/add_position", methods=["GET", "POST"])
+def delete_deactivated_objects(object_class, redirect_endpoint):
+    if not current_user.is_admin:
+        return "Access denied!", 403
+    
+    if request.form.get("csrf_token") != session["csrf_token"]:
+        return "Request blocked!", 403
+
+    confirm_delete = request.form.get("confirm_delete")
+    if confirm_delete != "on":
+        flash("Ви повинні підтвердити видалення, поставивши галочку!", "danger")
+        return redirect(url_for(redirect_endpoint))
+    
+    with Session() as db_session:
+        deactivated_objects = db_session.query(object_class).filter_by(active=False).all()
+        
+        for object in deactivated_objects:
+            # Для Menu видаляємо файли, для SpecialOffer - ні
+            if object_class == Menu:
+                file_path = os.path.join(FILES_PATH, object.file_name)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            db_session.delete(object)
+        
+        db_session.commit()
+        flash(f"Видалення деактивованих об'єктів завершено успішно!", "success")
+        return redirect(url_for(redirect_endpoint))
+
+# = ПОЗИЦІЇ =
+@app.get("/add_position")
 @login_required
 def add_position():
     if not current_user.is_admin:
         return "Access denied!", 403
 
-    previous_url = session.get("previous_url") or url_for("admin")
+    with Session() as db_session:
+        all_positions = db_session.query(Menu).all()
+        active_positions = db_session.query(Menu).filter_by(active=True).all()
+        deactivated_positions = db_session.query(Menu).filter_by(active=False).all()
+        
+        return render_template("admin/add_position.html", csrf_token=session["csrf_token"],
+                        all_positions=all_positions,
+                        active_positions=active_positions,
+                        deactivated_positions=deactivated_positions)
 
-    if request.method == "POST":
-        if request.form.get("csrf_token") != session["csrf_token"]:
+
+@app.post("/add_position/add")
+@login_required
+def add_position_post():
+    if not current_user.is_admin:
+        return "Access denied!", 403
+    
+    if request.form.get("csrf_token") != session["csrf_token"]:
             return "Request blocked!", 403
 
-        name = request.form["name"]
-        file = request.files.get("img")
-        ingredients = request.form["ingredients"]
-        description = request.form["description"]
-        price = request.form["price"]
-        weight = request.form["weight"]
+    name = request.form["name"]
+    file = request.files.get("img")
+    ingredients = request.form["ingredients"]
+    description = request.form["description"]
+    price = request.form["price"]
+    weight = request.form["weight"]
+
+    with Session() as db_session:
+        if db_session.query(Menu).filter_by(name=name).first():
+            flash("Позиція з такою назвою вже існує!", "danger")
+            return redirect(url_for("add_position"))
 
         if not file or not file.filename:
             return "Файл не вибрано або завантаження не вдалося"
@@ -453,58 +518,123 @@ def add_position():
         with open(output_path, "wb") as f:
             f.write(file.read())
 
-        with Session() as db_session:
-            new_position = Menu(name=name, ingredients=ingredients, 
-                               description=description, price=price, 
-                               weight=weight, file_name=unique_filename)
-            db_session.add(new_position)
-            db_session.commit()
+        new_position = Menu(name=name, ingredients=ingredients, 
+                            description=description, price=price, 
+                            weight=weight, file_name=unique_filename)
+        db_session.add(new_position)
+        db_session.commit()
 
         flash("Позицію додано успішно!", "success")
 
-    return render_template("admin/add_position.html", csrf_token=session["csrf_token"],
-                         previous_url=previous_url)
+    return redirect(url_for("add_position"))
 
 
-@app.route("/add_offer", methods=["GET", "POST"])
+@app.post("/add_position/deactivate")
+@login_required
+def deactivate_position():
+    position_id = request.form.get("position_id")
+    confirm_delete = request.form.get("confirm_delete")
+    
+    if confirm_delete != "on":
+        flash("Ви повинні підтвердити деактивування, поставивши галочку!", "danger")
+        return redirect(url_for("add_position"))
+    
+    return toggle_object_status(
+        Menu, position_id, False, 
+        "Позицію деактивовано успішно!", "add_position"
+    )
+
+@app.post("/add_position/activate")
+@login_required
+def activate_position():
+    position_id = request.form.get("position_id")
+    return toggle_object_status(
+        Menu, position_id, True, 
+        "Позицію активовано успішно!", "add_position"
+    )
+
+@app.post("/add_position/delete_positions")
+@login_required
+def delete_positions():
+    return delete_deactivated_objects(Menu, "add_position")
+
+# = ПРОПОЗИЦІЇ ==
+@app.get("/add_offer")
 @login_required
 def add_offer():
     if not current_user.is_admin:
         return "Access denied!", 403
 
-    previous_url = session.get("previous_url") or url_for("admin")
-
     with Session() as db_session:
         all_positions = db_session.query(Menu).filter_by(active=True).all()
+        active_offers = db_session.query(SpecialOffer).options(joinedload(SpecialOffer.menu)).filter_by(active=True).all()
+        deactivated_offers = db_session.query(SpecialOffer).options(joinedload(SpecialOffer.menu)).filter_by(active=False).all()
 
-        if request.method == "POST":
-            if request.form.get("csrf_token") != session["csrf_token"]:
-                return "Request blocked!", 403 
-
-            menu_id = request.form["menu_id"]
-            discount = float(request.form["discount"])
-            expiration_date = datetime.fromisoformat(request.form["expiration_date"])
-            active = "active" in request.form
-
-            new_position = SpecialOffer(
-                menu_id=menu_id, 
-                discount=discount, 
-                expiration_date=expiration_date, 
-                active=active
-            )
-            db_session.add(new_position)
-            db_session.commit()
-            flash("Пропозицію додано успішно!", "success")
-
-    with Session() as db_session:
-        all_positions = db_session.query(Menu).filter_by(active=True).all()
-        
         return render_template(
             "admin/add_offer.html", 
             csrf_token=session["csrf_token"], 
             all_positions=all_positions,
-            previous_url=previous_url
+            active_offers=active_offers,
+            deactivated_offers=deactivated_offers
         )
+
+
+@app.post("/add_offer/add")
+@login_required
+def add_offer_post():
+    if not current_user.is_admin:
+        return "Access denied!", 403
+    
+    if request.form.get("csrf_token") != session["csrf_token"]:
+        return "Request blocked!", 403 
+
+    with Session() as db_session:
+        menu_id = request.form["menu_id"]
+        discount = float(request.form["discount"])
+        expiration_date = datetime.fromisoformat(request.form["expiration_date"])
+        active = "active" in request.form
+
+        new_offer = SpecialOffer(
+            menu_id=menu_id, 
+            discount=discount, 
+            expiration_date=expiration_date, 
+            active=active
+        )
+        db_session.add(new_offer)
+        db_session.commit()
+        flash("Пропозицію додано успішно!", "success")
+        
+        return redirect(url_for("add_offer"))
+
+
+@app.post("/add_offer/deactivate")
+@login_required
+def deactivate_offer():
+    offer_id = request.form.get("offer_id")
+    confirm_delete = request.form.get("confirm_delete")
+    
+    if confirm_delete != "on":
+        flash("Ви повинні підтвердити деактивування, поставивши галочку!", "danger")
+        return redirect(url_for("add_offer"))
+    
+    return toggle_object_status(
+        SpecialOffer, offer_id, False, 
+        "Пропозицію деактивовано успішно!", "add_offer"
+    )
+
+@app.post("/add_offer/activate")
+@login_required
+def activate_offer():
+    offer_id = request.form.get("offer_id")
+    return toggle_object_status(
+        SpecialOffer, offer_id, True, 
+        "Пропозицію активовано успішно!", "add_offer"
+    )
+
+@app.post("/add_offer/delete_offers")
+@login_required
+def delete_offers():
+    return delete_deactivated_objects(SpecialOffer, "add_offer")
 
 
 # ===== ЗАПУСК ЗАСТОСУНКУ =====

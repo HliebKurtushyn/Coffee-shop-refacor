@@ -43,7 +43,6 @@ class Users(Base, UserMixin):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     basket = relationship("Basket", back_populates="user")
-    reservations = relationship("Reservation", back_populates="user")
     coupons = relationship("Coupons", back_populates="user")
 
     def set_password(self, password: str):
@@ -73,17 +72,6 @@ class Menu(Base):
 
     special_offers = relationship("SpecialOffer", back_populates="menu")
     basket = relationship("Basket", back_populates="menu")
-
-
-class Reservation(Base):
-    __tablename__ = "reservation"
-    
-    id: Mapped[int] = mapped_column(primary_key=True)
-    time_start: Mapped[datetime] = mapped_column(DateTime)
-    type_table: Mapped[str] = mapped_column(String(20))
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-
-    user = relationship("Users", back_populates="reservations")
 
 
 class Coupons(Base):
@@ -130,7 +118,7 @@ class SpecialOffer(Base):
     @validates('expiration_date')
     def validate_expiration_date(self, key, expiration_date):
         if expiration_date <= datetime.now():
-            raise ValueError("Offer cannot be added as expired")
+            raise ValueError("Offer can not be added as expired")
         return expiration_date
 
     @classmethod

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/my_coupons.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="coupons-title">Ваші замовлення</h2>
+
+{% if coupons %}
+    <div class="coupons-list">
+    {% for order in coupons %}
+        <div class="coupon-card">
+            <div class="coupon-header">
+                <span class="coupon-id">№{{ order.id }}</span>
+                <span class="coupon-date">{{ order.order_time.strftime('%d.%m.%Y %H:%M') }}</span>
+            </div>
+
+            <ul class="coupon-items">
+            {% for menu_id, quantity in order.order_items.items() %}
+                <li>
+                    <span class="item-name">{{ menu_items[menu_id] }}</span>
+                    <span class="item-qty">x{{ quantity }}</span>
+                </li>
+            {% endfor %}
+            </ul>
+
+            <div class="coupon-actions">
+                <a href="{{ url_for('coupon', coupon_id=order.id) }}" class="btn-coupon-details">Деталі</a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p class="no-coupons">Замовлень ще немає.</p>
+{% endif %}
+{% endblock %}

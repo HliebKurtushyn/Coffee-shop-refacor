@@ -1,0 +1,58 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}<title>Add Position - Admin Panel - The Corner</title>{% endblock %}
+
+{% block content %}
+    <h2>Додавання нової позиції</h2>
+    <form action="{{ url_for('add_position_post') }}" method="post" enctype="multipart/form-data" class="admin-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <input type="text" name="name" placeholder="Назва позиції" required>
+        <input type="file" name="img" accept="image/*" required>
+
+        <textarea name="ingredients" placeholder="Інгредієнти" required></textarea>
+        <textarea name="description" placeholder="Опис" required></textarea>
+
+        <input type="number" name="price" placeholder="Ціна (грн)" required>
+        <input type="number" name="weight" placeholder="Вага (г)" required>
+
+        <button type="submit" class="btn-coupon-details">Додати товар</button>
+    </form>
+
+    <h2>Деактивація позицій</h2>
+    <form action="{{ url_for('deactivate_position') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <select name="position_id" required>
+                {% for position in active_positions %}
+                    <option value="{{ position.id }}">{{ position.name }}</option>
+                {% endfor %}
+            </select required>
+            
+            <input type="checkbox" name="confirm_delete" required>
+            <span>Підтвердити</span>
+
+            <button type="submit">Деактивувати</button>
+    </form>
+
+    <h2>Активація позицій</h2>
+    <form action="{{ url_for('activate_position') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <select name="position_id" required>
+                {% for position in deactivated_positions %}
+                    <option value="{{ position.id }}">{{ position.name }}</option>
+                {% endfor %}
+            </select required>
+
+            <button type="submit">Активувати</button>
+    </form>
+
+    <h2>Видалити всі деактивовані позиції</h2>
+    <form action="{{ url_for('delete_positions') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <input type="checkbox" name="confirm_delete" required>
+            <span>Ви впевнені?</span>
+
+            <button type="submit">Видалити</button>
+    </form>
+{% endblock %}

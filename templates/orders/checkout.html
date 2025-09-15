@@ -1,0 +1,42 @@
+{% extends 'base_simple.html' %}
+
+{% block title %}Оформлення замовлення{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/checkout.css') }}">
+{% endblock %}
+
+{% block btn_back %}
+    <a href="{{ url_for('basket') }}" class="btn-back">Назад</a>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-title">Оформлення замовлення</div>
+    {% if basket %}
+        <div class="checkout-info">
+            <b>Перевірте, будь ласка, ваші позиції перед підтвердженням замовлення.</b><br>
+            Після натискання "Підтвердити замовлення" ви отримаєте QR-код для пред'явлення на касі.
+        </div>
+        <ul class="checkout-list">
+            {% for position in basket %}
+                <li>
+                    <span>{{ position.menu.name }}</span>
+                    <span>×{{ position.quantity }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="checkout-summary">
+            Загальна вартість: <span class="summary_important">{{ total_price }}₴</span>
+            <br>
+            Всього товарів: <span class="summary_important">{{ total_quantity }}</span>
+        </div>
+        <form action="{{ url_for('checkout') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="checkout-btn-confirm">Підтвердити замовлення</button>
+        </form>
+    {% else %}
+        <h2 style="text-align:center; color:#ff9800;">Ваш кошик порожній</h2>
+    {% endif %}
+</div>
+{% endblock %}
