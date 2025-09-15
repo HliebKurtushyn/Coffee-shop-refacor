@@ -1,15 +1,100 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/home/home.css') }}">
 {% endblock %}
 
 {% block title %}Головна - The Corner{% endblock %}
 
 {% block content %}
-    <div class="container-fluid py-3", id="upper_conatiner">
-        <p>Вітаю на сторінці для тих, хто НЕ ввійшов!</p>
-        <img src="{{ url_for('static', filename='images/cup_of_coffee.png') }}" alt="Cup of coffee", class="rounded float-end">
+    <div class="container home-container">
+        <!-- Привітання -->
+        <div class="welcome-user">
+            <h1 class="welcome-title">Вітаємо, {{ user.username }}! 👋</h1>
+            <p class="welcome-text">Раді бачити вас знову у The Corner!</p>
+            
+            <div class="user-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ user_coupons_count }}</div>
+                    <div class="stat-label">Замовлень</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ user_days_member }}</div>
+                    <div class="stat-label">Днів з нами</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Швидкі дії -->
+        <div class="quick-actions">
+            <a href="{{ url_for('menu') }}" class="action-card">
+                <div class="action-icon">📖</div>
+                <h3 class="action-title">Меню</h3>
+                <p class="action-description">Переглянути всі позиції та акції</p>
+            </a>
+
+            <a href="{{ url_for('basket') }}" class="action-card">
+                <div class="action-icon">🛒</div>
+                <h3 class="action-title">Кошик</h3>
+                <p class="action-description">Перейти до оформлення замовлення</p>
+            </a>
+
+            <a href="{{ url_for('my_coupons') }}" class="action-card">
+                <div class="action-icon">🎫</div>
+                <h3 class="action-title">Мої замовлення</h3>
+                <p class="action-description">Переглянути історію замовлень</p>
+            </a>
+
+            <a href="{{ url_for('profile') }}" class="action-card">
+                <div class="action-icon">👤</div>
+                <h3 class="action-title">Профіль</h3>
+                <p class="action-description">Керування акаунтом</p>
+            </a>
+        </div>
+
+        <!-- Останні замовлення -->
+        <div class="recent-orders">
+            <h2 class="section-title">Останні замовлення</h2>
+            <div class="order-list">
+                {% if recent_orders %}
+                    {% for order in recent_orders %}
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-number">Замовлення №{{ order.id }}</div>
+                            <div class="order-date">{{ order.order_time.strftime('%d.%m.%Y %H:%M') }}</div>
+                        </div>
+                        {% if order.active %}
+                            <div class="order-status-active">Активно</div>
+                        {% else %}
+                            <div class="order-status-completed">Завершено</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center; color: #7f8c8d;">У вас ще немає замовлень</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Спеціальні пропозиції -->
+        <div class="special-offers">
+            <h2 class="section-title">Спеціальні пропозиції</h2>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <span class="offer-badge">-20%</span>
+                    <h3 class="offer-title">Капучино Deluxe</h3>
+                    <p class="offer-description">Подвійна порція еспресо з вершковою піною</p>
+                    <div class="offer-price">48₴ <small style="text-decoration: line-through; color: #95a5a6;">60₴</small></div>
+                </div>
+
+                <div class="offer-card">
+                    <span class="offer-badge">-15%</span>
+                    <h3 class="offer-title">Лате Арт</h3>
+                    <p class="offer-description">З унікальним дизайном від нашого бариста</p>
+                    <div class="offer-price">51₴ <small style="text-decoration: line-through; color: #95a5a6;">60₴</small></div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

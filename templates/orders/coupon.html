@@ -1,29 +1,35 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/my_coupons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/orders/coupon.css') }}">
+{% endblock %}
+
+{% block btn_back %}
+    <a href="{{ url_for('my_coupons') }}" class="btn-back">Назад до всіх купонів</a>
 {% endblock %}
 
 {% block content %}
     <h2 class="coupons-title">Деталі замовлення №{{ order.id }}</h2>
     <div class="coupon-card">
         <div class="coupon-header">
-            <span class="coupon-id">№{{ order.id }}</span>
+            <span class="coupon-id">Замовлення №{{ order.id }}</span>
             <span class="coupon-date">{{ order.order_time.strftime('%d.%m.%Y %H:%M') }}</span>
         </div>
         <ul class="coupon-items">
         {% for menu_id, quantity in order.order_items.items() %}
             <li>
-                {% set menu_item = order.menu %}
-                <span class="item-name">{{ menu_item.name }}</span>
-                <span class="item-qty">×{{ quantity }}</span>
+                <span class="item-name">{{ menu_items.get(menu_id, 'Невідома позиція') }}</span>
+                <span class="item-qty">{{ quantity }} шт.</span>
             </li>
         {% endfor %}
         </ul>
+        
         {% if order.qr_code_path %}
-            <div style="text-align:center; margin: 18px 0;">
-                <img src="{{ url_for('static', filename='qrcodes/' ~ ('coupon_' ~ order.id ~ '.png')) }}" alt="QR код замовлення" style="max-width:180px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                <div style="font-size:0.95rem; color:#888; margin-top:8px;">Покажіть цей QR-код на касі</div>
+            <div class="qr-container">
+                <img src="{{ url_for('static', filename='qrcodes/coupon_' ~ order.id ~ '.png') }}" 
+                     alt="QR код замовлення" 
+                     class="qr-code">
+                <div class="qr-text">Покажіть цей QR-код на касі</div>
             </div>
         {% endif %}
     </div>

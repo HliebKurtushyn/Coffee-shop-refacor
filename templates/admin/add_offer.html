@@ -2,66 +2,102 @@
 
 {% block title %}<title>Add offer - Admin Panel - The Corner</title>{% endblock %}
 
-
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/admin_form.css') }}">
-{% endblock head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/admin/admin_form.css') }}">
+{% endblock %}
 
 {% block content %}
-    <h2>Додавання нової пропозиції</h2>
-    <form method="post" action="{{ url_for('add_offer_post') }}" enctype="multipart/form-data" class="admin-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <select name="menu_id" required>
-            {% for position in all_positions %}
-                <option value="{{ position.id }}">{{ position.name }}</option>
-            {% endfor %}
-        </select>
+    <h1>Управління пропозиціями</h1>
 
-        <input type="number" name="discount" placeholder="%" step="0.01" required>
-        <input type="datetime-local" name="expiration_date" required placeholder="Термін дії">
-
-        <input type="checkbox" name="active" placeholder="Активна" checked>
-        <small>Active</small>
-
-        <br>
-        
-        <button type="submit" class="btn-coupon-details">Додати пропозицію</button>
-    </form>
-
-    <h2>Деактивація пропозиції</h2>
-    <form action="{{ url_for('deactivate_offer') }}" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <select name="offer_id" required>
-                {% for offer in active_offers %}
-                    <option value="{{ offer.id }}">{{ offer.menu.name }}</option>
-                {% endfor %}
-            </select required>
-            
-            <input type="checkbox" name="confirm_delete" required>
-            <span>Підтвердити</span>
-
-            <button type="submit">Деактивувати</button>
-    </form>
-
-    <h2>Активація пропозиції</h2>
-    <form action="{{ url_for('activate_offer') }}" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <select name="offer_id" required>
-                {% for offer in deactivated_offers %}
-                    <option value="{{ offer.id }}">{{ offer.menu.name }}</option>
-                {% endfor %}
-            </select required>
-
-            <button type="submit">Активувати</button>
-    </form>
-
-    <h2>Видалити всі деактивовані пропозиції</h2>
-    <form action="{{ url_for('delete_offers') }}" method="post">
+    <!-- Додавання нової пропозиції -->
+    <div class="admin-form-container">
+        <h2>Додавання нової пропозиції</h2>
+        <form method="post" action="{{ url_for('add_offer_post') }}" enctype="multipart/form-data" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             
-            <input type="checkbox" name="confirm_delete" required>
-            <span>Ви впевнені?</span>
+            <div class="form-group">
+                <label for="menu_id">Позиція меню:</label>
+                <select name="menu_id" id="menu_id" required>
+                    {% for position in all_positions %}
+                        <option value="{{ position.id }}">{{ position.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            <button type="submit">Видалити</button>
-    </form>
+            <div class="form-group">
+                <label for="discount">Знижка (%):</label>
+                <input type="number" name="discount" id="discount" placeholder="Введіть знижку" step="0.01" min="0" max="100" required>
+            </div>
+
+            <div class="form-group">
+                <label for="expiration_date">Термін дії:</label>
+                <input type="datetime-local" name="expiration_date" id="expiration_date" required>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="active" id="active" checked>
+                <span for="active">Активна пропозиція</span>
+            </div>
+
+            <button type="submit" class="btn-form">Додати пропозицію</button>
+        </form>
+    </div>
+
+    <!-- Деактивація пропозиції -->
+    <div class="admin-form-container warning-box">
+        <h2>Деактивація пропозиції</h2>
+        <form action="{{ url_for('deactivate_offer') }}" method="post" class="admin-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <div class="form-group">
+                <label for="deactivate_offer">Оберіть пропозицію для деактивації:</label>
+                <select name="offer_id" id="deactivate_offer" required>
+                    {% for offer in active_offers %}
+                        <option value="{{ offer.id }}">{{ offer.menu.name }} ({{ offer.discount }}%)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="confirm_delete" id="confirm_deactivate" required>
+                <span for="confirm_deactivate">Підтвердити деактивацію</span>
+            </div>
+
+            <button type="submit" class="btn-form btn-danger">Деактивувати</button>
+        </form>
+    </div>
+
+    <!-- Активація пропозиції -->
+    <div class="admin-form-container success-box">
+        <h2>Активація пропозиції</h2>
+        <form action="{{ url_for('activate_offer') }}" method="post" class="admin-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <div class="form-group">
+                <label for="activate_offer">Оберіть пропозицію для активації:</label>
+                <select name="offer_id" id="activate_offer" required>
+                    {% for offer in deactivated_offers %}
+                        <option value="{{ offer.id }}">{{ offer.menu.name }} ({{ offer.discount }}%)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn-form btn-success">Активувати</button>
+        </form>
+    </div>
+
+    <!-- Видалення деактивованих пропозицій -->
+    <div class="admin-form-container danger-box">
+        <h2>Видалити всі деактивовані пропозиції</h2>
+        <form action="{{ url_for('delete_offers') }}" method="post" class="admin-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <div class="checkbox-group">
+                <input type="checkbox" name="confirm_delete" id="confirm_delete" required>
+                <span for="confirm_delete">Ви впевнені, що хочете видалити всі деактивовані пропозиції?</span>
+            </div>
+
+            <button type="submit" class="btn-form btn-danger">Видалити всі</button>
+        </form>
+    </div>
 {% endblock %}

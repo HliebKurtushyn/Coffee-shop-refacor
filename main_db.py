@@ -80,6 +80,7 @@ class Coupons(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     order_items: Mapped[dict] = mapped_column(JSONB)
     order_time: Mapped[datetime] = mapped_column(DateTime)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     qr_code_path: Mapped[str] = mapped_column(String, nullable=True)
 

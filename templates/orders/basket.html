@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/basket.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/orders/basket.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -10,21 +10,6 @@
     {% if not basket %}
         <p>Ваш кошик порожній.</p>
     {% else %}
-    
-    {% block flash_message %}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="container mt-3">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-    {% endblock %}
 
     {% for item in basket %}
     <div class="basket-item">

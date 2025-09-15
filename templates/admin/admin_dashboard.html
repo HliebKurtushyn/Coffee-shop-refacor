@@ -1,0 +1,39 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}<title>Admin Panel - The Corner</title>{% endblock %}
+
+{% block content %}
+    <h1>Панель управління</h1>
+    
+    <div class="admin-stats">
+        <h2>Статистика</h2>
+        <p><strong>{{ users|length }}</strong> зареєстрованих користувачів</p>
+        <div class="admin-actions">
+            <a href="{{ url_for('add_position') }}" class="admin-btn">Додати позицію</a>
+            <a href="{{ url_for('add_offer') }}" class="admin-btn">Додати пропозицію</a>
+        </div>
+    </div>
+
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Is Admin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ 'Так' if user.is_admin else 'Ні' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,214 @@
+/* Стилі для головної сторінки гостей */
+.welcome-container {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.welcome-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.welcome-title {
+    font-family: 'Edu NSW ACT Hand Cursive', cursive;
+    font-size: 3.5rem;
+    color: #5d4037;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(93, 64, 55, 0.1);
+}
+
+.welcome-subtitle {
+    font-size: 1.3rem;
+    color: #7d5d3b;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.welcome-btn {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+}
+
+.welcome-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230, 126, 34, 0.4);
+    color: white;
+}
+
+.welcome-btn-secondary {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+}
+
+.welcome-btn-secondary:hover {
+    box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+}
+
+/* Секція представлення */
+.hero-section {
+    background: linear-gradient(135deg, rgba(232, 179, 116, 0.1) 0%, rgba(255, 245, 230, 0.3) 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    margin: 2rem 0;
+    text-align: center;
+    border: 2px solid #ffd9b3;
+}
+
+.hero-image {
+    max-width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin: 0 auto 2rem;
+    border: 4px solid #fff;
+}
+
+.hero-text {
+    font-size: 1.2rem;
+    color: #5d4037;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Секція популярних позицій */
+.popular-section {
+    margin: 3rem 0;
+}
+
+.section-title {
+    text-align: center;
+    color: #5d4037;
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.popular-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.popular-item {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border: 1px solid #ffe6cc;
+}
+
+.popular-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.item-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.item-name {
+    font-size: 1.3rem;
+    color: #5d4037;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.item-price {
+    font-size: 1.1rem;
+    color: #e67e22;
+    font-weight: 600;
+}
+
+.item-description {
+    color: #7d5d3b;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* Переваги */
+.features-section {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+    padding: 3rem 0;
+    margin: 3rem 0;
+    border-radius: 20px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.feature-item {
+    padding: 1.5rem;
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: #e67e22;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.2rem;
+    color: #5d4037;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.feature-text {
+    color: #7d5d3b;
+    font-size: 0.95rem;
+}
+
+/* Анімації */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-hero {
+    animation: fadeIn 0.8s ease;
+}
+
+.hero-section {
+    animation: fadeIn 1s ease;
+}
+
+.popular-section {
+    animation: fadeIn 1.2s ease;
+}
+
+.features-section {
+    animation: fadeIn 1.4s ease;
+}

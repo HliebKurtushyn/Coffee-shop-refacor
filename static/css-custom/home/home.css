@@ -1,0 +1,241 @@
+/* Стилі для домашньої сторінки зареєстрованих користувачів */
+.home-container {
+    min-height: 80vh;
+    padding: 2rem 0;
+}
+
+.welcome-user {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, rgba(232, 179, 116, 0.2) 0%, rgba(255, 245, 230, 0.4) 100%);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid #ffd9b3;
+}
+
+.welcome-title {
+    font-family: 'Edu NSW ACT Hand Cursive', cursive;
+    font-size: 3rem;
+    color: #5d4037;
+    margin-bottom: 1rem;
+}
+
+.welcome-text {
+    font-size: 1.2rem;
+    color: #7d5d3b;
+    margin-bottom: 1.5rem;
+}
+
+.user-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    border: 1px solid #ffe6cc;
+}
+
+.stat-number {
+    font-size: 2rem;
+    color: #e67e22;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #5d4037;
+    font-weight: 600;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+}
+
+.action-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #e67e22;
+}
+
+.action-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #e67e22;
+}
+
+.action-title {
+    font-size: 1.3rem;
+    color: #5d4037;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.action-description {
+    color: #7d5d3b;
+    font-size: 0.95rem;
+}
+
+.recent-orders {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+    padding: 2rem;
+    border-radius: 20px;
+    margin: 3rem 0;
+    border: 2px solid #ffd9b3;
+}
+
+.section-title {
+    text-align: center;
+    color: #5d4037;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.order-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ffe6cc;
+}
+
+.order-info {
+    flex: 1;
+}
+
+.order-number {
+    font-weight: 700;
+    color: #5d4037;
+    margin-bottom: 0.3rem;
+}
+
+.order-date {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.order-status-active {
+    background: #27ae60;
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.order-status-completed {
+    background: #95a5a6;
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.special-offers {
+    margin: 3rem 0;
+}
+
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.offer-card {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #f39c12;
+}
+
+.offer-badge {
+    background: #e74c3c;
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.offer-title {
+    font-size: 1.4rem;
+    color: #2d3436;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.offer-description {
+    color: #636e72;
+    margin-bottom: 1rem;
+}
+
+.offer-price {
+    font-size: 1.3rem;
+    color: #e67e22;
+    font-weight: 700;
+}
+
+/* Анімації */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.welcome-user {
+    animation: slideIn 0.6s ease;
+}
+
+.quick-actions {
+    animation: slideIn 0.8s ease;
+}
+
+.recent-orders {
+    animation: slideIn 1s ease;
+}
+
+.special-offers {
+    animation: slideIn 1.2s ease;
+}

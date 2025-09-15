@@ -1,0 +1,142 @@
+/* Стилі для сторінки деталей замовлення */
+.coupons-title {
+    text-align: center;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.coupon-card {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(230, 126, 34, 0.2);
+    padding: 2rem;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    border: 3px solid #ffcc99;
+    position: relative;
+    overflow: hidden;
+}
+
+.coupon-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e67e22, #d35400, #e67e22);
+}
+
+.coupon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #ffd9b3;
+}
+
+.coupon-id {
+    font-size: 1.4rem;
+    color: #d35400;
+    font-weight: 800;
+    background: rgba(230, 126, 34, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+}
+
+.coupon-date {
+    font-size: 1rem;
+    color: #7f8c8d;
+    font-weight: 600;
+    background: rgba(127, 140, 141, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+}
+
+.coupon-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    width: 100%;
+}
+
+.coupon-items li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #ffe6cc;
+    transition: all 0.3s ease;
+}
+
+.coupon-items li:last-child {
+    border-bottom: none;
+}
+
+.coupon-items li:hover {
+    background-color: rgba(255, 204, 153, 0.15);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    transform: translateX(5px);
+}
+
+.item-name {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+.item-qty {
+    color: #e74c3c;
+    font-weight: 700;
+    background: rgba(231, 76, 60, 0.15);
+    padding: 0.4rem 1rem;
+    border-radius: 15px;
+    min-width: 60px;
+    text-align: center;
+    font-size: 1rem;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* Стилі для QR-коду */
+.qr-container {
+    text-align: center;
+    margin: 2rem 0 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    border: 2px dashed #e67e22;
+}
+
+.qr-code {
+    max-width: 200px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    border: 3px solid #fff;
+    transition: transform 0.3s ease;
+}
+
+.qr-code:hover {
+    transform: scale(1.05);
+}
+
+.qr-text {
+    font-size: 0.95rem;
+    color: #7f8c8d;
+    margin-top: 0.8rem;
+    font-weight: 600;
+    background: rgba(127, 140, 141, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.coupon-card {
+    animation: fadeInUp 0.6s ease;
+}

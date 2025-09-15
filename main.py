@@ -76,16 +76,31 @@ def apply_csp(response):
 
 
 # ===== ГОЛОВНА СТОРІНКА =====
-@app.route("/")
 @app.route("/home")
+@login_required
 def home():
-    # Якщо залогінений
     if current_user.is_authenticated:
-        return render_template("home/main.html", user=current_user, 
-                          current_year=datetime.now().year)
+        with Session() as db_session:
+            user_coupons_count = db_session.query(Coupons).filter_by(user_id=current_user.id).count()
 
-    # Якщо не залогінений       
-    return render_template("home/home.html", user=current_user, 
+            coupons = db_session.query(Coupons).filter_by(user_id=current_user.id).all()
+            for coupon in coupons:
+                pass
+            
+            days_member = (datetime.now() - current_user.created_at).days if hasattr(current_user, 'created_at') else 1
+            
+            recent_orders = db_session.query(Coupons).filter_by(user_id=current_user.id)\
+                .order_by(Coupons.order_time.desc()).limit(3).all()
+
+        return render_template("home/home.html", 
+                            user=current_user,
+                            user_coupons_count=user_coupons_count,
+                            user_days_member=days_member,
+                            recent_orders=recent_orders,
+                            current_year=datetime.now().year)
+    
+    return render_template("home/welcome.html", 
+                          user=current_user, 
                           current_year=datetime.now().year)
 
 
@@ -134,7 +149,10 @@ def register_post():
         db_session.add(new_user)
         db_session.commit()
         db_session.refresh(new_user)
+
         login_user(new_user)
+        current_user.created_at = datetime.now()
+
         return redirect(url_for("home"))
 
 
@@ -278,7 +296,6 @@ def update_quantity():
         new_total_quantity = other_items_quantity + int(quantity)
 
         if new_total_quantity > 10:
-            flash(f"В кошику не може бути більше 10 одиниць товару! Лишня кількість: {new_total_quantity - 10}", "danger")
             return redirect(url_for("basket"))
         
         if quantity and quantity.isdigit() and int(quantity) > 0:
@@ -304,7 +321,6 @@ def remove_from_basket():
         
         db_session.delete(basket_item)
         db_session.commit()
-        flash(f"Видалено {basket_item.menu.name} з кошика", "success")
 
         return redirect(url_for("basket"))
         
@@ -403,12 +419,26 @@ def my_coupons():
 @login_required
 def coupon(coupon_id):
     with Session() as db_session:
+        # Знаходимо купон
         order = db_session.query(Coupons).filter_by(id=coupon_id, user_id=current_user.id).first()
         if not order:
             return "Купон не знайдено!", 404
-
-        return render_template("orders/coupon.html", order=order,
-                                user=current_user)
+        
+        # Отримуємо всі menu_id з order_items купона
+        all_menu_ids = set()
+        if order.order_items:
+            all_menu_ids.update([int(menu_id) for menu_id in order.order_items.keys()])
+        
+        # Отримуємо назви позицій меню
+        menu_items = {}
+        if all_menu_ids:
+            menus = db_session.query(Menu).filter(Menu.id.in_(all_menu_ids)).all()
+            menu_items = {str(menu.id): menu.name for menu in menus}
+        
+        return render_template("orders/coupon.html", 
+                             order=order,
+                             menu_items=menu_items,
+                             user=current_user)
     
 
 # ===== АДМІНІСТРУВАННЯ =====
@@ -416,12 +446,12 @@ def coupon(coupon_id):
 @login_required
 def admin():
     if not current_user.is_admin:
-        return "Шо, адміном себе представляєш?", 418
+        return "Замість того щоб пропувати зайти в адмін панель, стань чашкою чаю☕", 418
     
     with Session() as db_session:
         users = db_session.query(Users).all()
 
-    return render_template("admin/admin.html", users=users)
+    return render_template("admin/admin_dashboard.html", users=users)
 
 # = ФУНКЦІЇ ДЛЯ КЕРУВАННЯ ОБ'ЄКТАМИ =
 # *Для уникнення дублювання коду

@@ -1,0 +1,163 @@
+/* Стилі для форм адмінки */
+.admin-form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 2rem;
+    border-left: 5px solid #e67e22;
+}
+
+.admin-form-container h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 0.5rem;
+}
+
+/* Загальні стилі для форм */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.admin-form select,
+.admin-form input[type="number"],
+.admin-form input[type="datetime-local"],
+.admin-form input[type="text"],
+.admin-form input[type="password"],
+.admin-form textarea {
+    padding: 0.8rem 1rem;
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.admin-form select:focus,
+.admin-form input:focus,
+.admin-form textarea:focus {
+    border-color: #e67e22;
+    box-shadow: 0 0 0 0.3rem rgba(230, 126, 34, 0.2);
+    background-color: white;
+    outline: none;
+}
+
+/* Чекбокси */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #e67e22;
+    cursor: pointer;
+}
+
+.checkbox-group span {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Кнопки */
+.btn-form {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 1rem;
+}
+
+.btn-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(230, 126, 34, 0.4);
+}
+
+.btn-form:active {
+    transform: translateY(0);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.btn-danger:hover {
+    box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+}
+
+.btn-success:hover {
+    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+}
+
+/* Групи полів */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.3rem;
+}
+
+/* Спеціальні стилі для деактивації/активації */
+.warning-box {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.danger-box {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.success-box {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .admin-form-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .admin-form {
+        gap: 1rem;
+    }
+    
+    .btn-form {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}

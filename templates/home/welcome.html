@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/home/welcome.css') }}">
+{% endblock %}
+
+{% block title %}Ласкаво просимо - The Corner{% endblock %}
+
+{% block content %}
+    <div class="container welcome-container">
+        <!-- Герой секція -->
+        <div class="welcome-hero">
+            <h1 class="welcome-title">The Corner</h1>
+            <p class="welcome-subtitle">Найсмачніша кава та затишна атмосфера</p>
+            
+            <div class="welcome-actions">
+                <a href="{{ url_for('register') }}" class="welcome-btn">Приєднатися</a>
+                <a href="{{ url_for('login') }}" class="welcome-btn welcome-btn-secondary">Увійти</a>
+            </div>
+        </div>
+
+        <!-- Представлення -->
+        <div class="hero-section">
+            <img src="{{ url_for('static', filename='images/cup_of_coffee.png') }}" alt="Чашка кави" class="hero-image">
+            <p class="hero-text">
+                Ласкаво просимо до The Corner - місця, де кожна чашка кави розповідає свою унікальну історію. 
+                Ми пропонуємо найсвіжіші зерна, майстерне приготування та неперевершену атмосферу для справжніх поціновувачів кави.
+            </p>
+        </div>
+
+        <!-- Популярні позиції -->
+        <div class="popular-section">
+            <h2 class="section-title">Популярні позиції</h2>
+            <div class="popular-items">
+                <!-- Приклад позиції 1 -->
+                <div class="popular-item">
+                    <img src="{{ url_for('static', filename='menu/espresso.png') }}" alt="Еспресо" class="item-image">
+                    <h3 class="item-name">Еспресо</h3>
+                    <p class="item-price">45₴</p>
+                    <p class="item-description">Класичний міцний еспресо з багатим смаком</p>
+                </div>
+
+                <!-- Приклад позиції 2 -->
+                <div class="popular-item">
+                    <img src="{{ url_for('static', filename='menu/cappuccino.png') }}" alt="Капучино" class="item-image">
+                    <h3 class="item-name">Капучино</h3>
+                    <p class="item-price">55₴</p>
+                    <p class="item-description">Ніжна кава з молочною піною та унікальним дизайном</p>
+                </div>
+
+                <!-- Приклад позиції 3 -->
+                <div class="popular-item">
+                    <img src="{{ url_for('static', filename='menu/latte_macchiato.png') }}" alt="Лате" class="item-image">
+                    <h3 class="item-name">Лате</h3>
+                    <p class="item-price">60₴</p>
+                    <p class="item-description">М'яка кава з великою кількістю зігрітого молока</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Переваги -->
+        <div class="features-section">
+            <h2 class="section-title">Чому обирають нас?</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">☕</div>
+                    <h3 class="feature-title">Свіжесмажена кава</h3>
+                    <p class="feature-text">Щоденно смажимо зерна для ідеального смаку</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">⏰</div>
+                    <h3 class="feature-title">Швидке обслуговування</h3>
+                    <p class="feature-text">Готуємо вашу каву за 3-5 хвилин</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Зручне замовлення</h3>
+                    <p class="feature-text">Замовляйте онлайн</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">💝</div>
+                    <h3 class="feature-title">Затишна атмосфера</h3>
+                    <p class="feature-text">Ідеальне місце для роботи та відпочинку</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block btn_back %}
+    <span></span>
+{% endblock %}

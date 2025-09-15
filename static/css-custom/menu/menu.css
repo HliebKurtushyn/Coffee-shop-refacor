@@ -1,0 +1,267 @@
+.custom-navbar {
+    color: #fff;
+    font-size: large;
+    background-color: rgba(0, 0, 0); /*прозорий фон */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: none;
+    border-radius: 0%;
+}
+
+.custom-navbar-container::after {
+    display: none;
+}
+
+.navbar-brand {
+    color: #ff9800;
+    font-family: "Edu NSW ACT Hand Cursive", cursive;
+    font-size: xx-large;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.navbar-brand:hover  {
+    transition: all 0.4s;
+    color: #ff5722 !important;
+}
+
+.nav-link:hover {
+    color: #ff5722 !important;
+}
+
+/* --- OFFERS SECTION --- */
+.offers-section {
+    z-index: 5; /* над картками меню */
+    width: 100vw;
+    background: #000;
+    color: #fff;
+    padding: 80px 40px;
+    display: flex;
+    justify-content: flex-start; /* вже було */
+    align-items: center;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.offer-banner {
+    z-index: 5; /* над фоном */
+    display: flex;
+    flex-direction: row; /* фото справа */
+    align-items: center;
+    gap: 40px;
+    width: 100%;           /* займає всю ширину */
+    max-width: none;       /* знімаємо обмеження */
+    justify-content: flex-start; /* все вліво */
+}
+
+.offer-img {
+    flex: 1;
+    max-width: 600px;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.offer-text {
+    flex: 1;
+    text-align: left;
+}
+
+.offer-text h2 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.offer-text p {
+    font-size: 1.2rem;
+    margin: 6px 0;
+}
+
+.offer-text .exp {
+    color: #ccc;
+    font-size: 1rem;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* відстань між цінами та знижкою */
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #800a0a;
+    font-size: 0.9rem;
+}
+
+.new-price {
+    color: #ff5722;
+}
+
+.discount {
+    background-color: #ff9800;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.small-price {
+    font-size: 1.3rem;
+    color: #ccc;
+    margin-left: 6px;
+}
+
+/* --- SVG DIVIDER --- */
+.section-divider {
+    position: relative;
+    width: 100%;
+    line-height: 0;   /* прибирає зайві відступи */
+    overflow: hidden;
+}
+
+.section-divider svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* --- BACKGROUND IMAGES --- */
+.bg-coffee {
+    position: absolute;
+    z-index: 1;           /* позаду карток */
+    pointer-events: none; /* не заважають клікам */
+    opacity: 0.2;         /* трохи прозорості */
+    transition: transform 0.3s ease; /* легкий ефект руху при скролі, опційно */
+}
+
+/* Великі позиції */
+.bg-coffee1 {
+    top: -150px;
+    left: -200px;
+    width: 500px;
+    height: auto;
+}
+
+.bg-coffee2 {
+    top: 5%;
+    right: -150px;
+    width: 450px;
+    height: auto;
+}
+
+.bg-coffee3 {
+    bottom: -120px;
+    left: 5%;
+    width: 400px;
+    height: auto;
+}
+
+.bg-coffee4 {
+    top: 30%;
+    left: 20%;
+    width: 500px;
+    height: auto;
+    z-index: 0; /* на фоні карток меню */
+    opacity: 0.15;
+}
+
+/* --- MENU GRID --- */
+.menu-section {
+    border-top: #ffffff 4px solid;
+    padding: 100px 20px; /* ще більше відступів зверху/знизу */
+    position: relative; /* щоб картинки були всередині секції */
+    overflow: hidden;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 страви в ряд */
+    gap: 100px; /* більше відстані між картками */
+    justify-content: center; /* центруємо сітку */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dish-card {
+    background: rgba(255, 255, 255, 0.50);
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 40px; /* більше простору всередині */
+    position: relative;
+    overflow: visible;
+    text-align: left;
+    transform: scale(1.1); /* збільшений масштаб */
+    transition: transform 0.2s;
+}
+
+.dish-card:hover {
+    transform: scale(1.12); /* легкий ефект при наведенні */
+}
+
+.dish-img-wrapper {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    border: 6px solid #ff5252;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+}
+
+.dish-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dish-info {
+    margin-top: 80px; /* щоб текст не налазив на фото */
+}
+
+.dish-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.dish-price {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #ff5252;
+    margin-bottom: 14px;
+}
+
+.dish-small_info {
+    font-size: 0.7rem;
+    color: #999999 !important;
+    margin-left: 6px;
+}
+
+.dish-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #ff9800;
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.dish-btn:hover {
+    background: #ffa733;
+    transform: translateY(-2px);
+}
+
+.btn-back {
+    display: none;
+}

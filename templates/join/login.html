@@ -1,7 +1,7 @@
 {% extends 'base_simple.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/login_reg.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/join/join.css') }}">
 {% endblock %}
 
 {% block title %}Вхід - The Corner{% endblock %}
@@ -18,6 +18,6 @@
             <input type="password" name="password" placeholder="Пароль" class="form-control mb-3 custom-input" required>
             <button type="submit" class="btn btn-primary w-100 rounded-pill">Увійти</button>
         </form>
-        <p class="text-center mt-3">Ще не маєте акаунту? <a href="{{ url_for('register') }}">Зробіть його зараз!</a></p>
+        <p class="text-center mt-3">Ще не маєте акаунту? <a class="join-alt" href="{{ url_for('register') }}">Зробіть його зараз!</a></p>
     </div>
 {% endblock %}

@@ -1,0 +1,75 @@
+/* Центрування форми */
+.flex-grow-1 > .d-flex {
+    height: 100vh;
+}
+
+/* Форма */
+.login-form {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    margin-top: 15vw;
+    padding: 2.5rem 2rem;
+    align-self: center;
+    border-radius: 24px;
+    background: #fff7e6;
+    box-shadow: 0 8px 32px rgba(212, 155, 106, 0.15), 0 1.5px 8px rgba(255, 179, 102, 0.10);
+    position: relative;
+    z-index: 1;
+    transition: box-shadow 0.3s;
+}
+.login-form:hover {
+    box-shadow: 0 12px 40px rgba(212, 155, 106, 0.22), 0 2px 12px rgba(255, 179, 102, 0.15);
+}
+
+/* Інпути */
+.custom-input {
+    border-radius: 999px;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto 1.2rem auto;
+    text-align: center;
+    border: 2px solid #ffb366;
+    background: #fff;
+    font-size: 1.1rem;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+.custom-input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 200, 150, 0.25);
+    border-color: #d49b6a;
+    outline: none;
+}
+
+/* Кнопка */
+.btn-primary {
+    background: linear-gradient(90deg, #ffb366 0%, #d49b6a 100%);
+    border: none;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.7rem 0;
+    box-shadow: 0 2px 8px rgba(255, 179, 102, 0.10);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: linear-gradient(90deg, #d49b6a 0%, #ffb366 100%);
+    box-shadow: 0 4px 16px rgba(255, 179, 102, 0.18);
+}
+
+/* Алерт */
+.alert {
+    border-radius: 12px;
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 8px rgba(255, 179, 102, 0.10);
+}
+
+.join-alt {
+    color: #5d4037 !important;
+    text-decoration: none;
+}
+
+.join-alt:hover {
+    color: #3a2924 !important;
+    text-decoration: underline;
+}

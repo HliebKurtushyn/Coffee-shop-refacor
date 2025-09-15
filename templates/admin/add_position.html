@@ -2,57 +2,108 @@
 
 {% block title %}<title>Add Position - Admin Panel - The Corner</title>{% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/admin/admin_form.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h2>Додавання нової позиції</h2>
-    <form action="{{ url_for('add_position_post') }}" method="post" enctype="multipart/form-data" class="admin-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <h1>Управління позиціями меню</h1>
 
-        <input type="text" name="name" placeholder="Назва позиції" required>
-        <input type="file" name="img" accept="image/*" required>
-
-        <textarea name="ingredients" placeholder="Інгредієнти" required></textarea>
-        <textarea name="description" placeholder="Опис" required></textarea>
-
-        <input type="number" name="price" placeholder="Ціна (грн)" required>
-        <input type="number" name="weight" placeholder="Вага (г)" required>
-
-        <button type="submit" class="btn-coupon-details">Додати товар</button>
-    </form>
-
-    <h2>Деактивація позицій</h2>
-    <form action="{{ url_for('deactivate_position') }}" method="post">
+    <!-- Додавання нової позиції -->
+    <div class="admin-form-container">
+        <h2>Додавання нової позиції</h2>
+        <form action="{{ url_for('add_position_post') }}" method="post" enctype="multipart/form-data" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <select name="position_id" required>
-                {% for position in active_positions %}
-                    <option value="{{ position.id }}">{{ position.name }}</option>
-                {% endfor %}
-            </select required>
+
+            <div class="form-group">
+                <label for="name">Назва позиції:</label>
+                <input type="text" name="name" id="name" placeholder="Введіть назву позиції" required>
+            </div>
+
+            <div class="form-group">
+                <label for="img">Зображення:</label>
+                <input type="file" name="img" id="img" accept="image/*" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ingredients">Інгредієнти:</label>
+                <textarea name="ingredients" id="ingredients" placeholder="Перелічіть інгредієнти" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Опис:</label>
+                <textarea name="description" id="description" placeholder="Додайте опис позиції" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Ціна (грн):</label>
+                <input type="number" name="price" id="price" placeholder="Введіть ціну" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Вага (г):</label>
+                <input type="number" name="weight" id="weight" placeholder="Введіть вагу" min="0" required>
+            </div>
+
+            <button type="submit" class="btn-form">Додати товар</button>
+        </form>
+    </div>
+
+    <!-- Деактивація позицій -->
+    <div class="admin-form-container warning-box">
+        <h2>Деактивація позицій</h2>
+        <form action="{{ url_for('deactivate_position') }}" method="post" class="admin-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             
-            <input type="checkbox" name="confirm_delete" required>
-            <span>Підтвердити</span>
+            <div class="form-group">
+                <label for="deactivate_position">Оберіть позицію для деактивації:</label>
+                <select name="position_id" id="deactivate_position" required>
+                    {% for position in active_positions %}
+                        <option value="{{ position.id }}">{{ position.name }} - {{ position.price }} грн</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            <button type="submit">Деактивувати</button>
-    </form>
+            <div class="checkbox-group">
+                <input type="checkbox" name="confirm_delete" id="confirm_deactivate_position" required>
+                <span for="confirm_deactivate_position">Підтвердити деактивацію</span>
+            </div>
 
-    <h2>Активація позицій</h2>
-    <form action="{{ url_for('activate_position') }}" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <select name="position_id" required>
-                {% for position in deactivated_positions %}
-                    <option value="{{ position.id }}">{{ position.name }}</option>
-                {% endfor %}
-            </select required>
+            <button type="submit" class="btn-form btn-danger">Деактивувати</button>
+        </form>
+    </div>
 
-            <button type="submit">Активувати</button>
-    </form>
-
-    <h2>Видалити всі деактивовані позиції</h2>
-    <form action="{{ url_for('delete_positions') }}" method="post">
+    <!-- Активація позицій -->
+    <div class="admin-form-container success-box">
+        <h2>Активація позицій</h2>
+        <form action="{{ url_for('activate_position') }}" method="post" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             
-            <input type="checkbox" name="confirm_delete" required>
-            <span>Ви впевнені?</span>
+            <div class="form-group">
+                <label for="activate_position">Оберіть позицію для активації:</label>
+                <select name="position_id" id="activate_position" required>
+                    {% for position in deactivated_positions %}
+                        <option value="{{ position.id }}">{{ position.name }} - {{ position.price }} грн</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            <button type="submit">Видалити</button>
-    </form>
+            <button type="submit" class="btn-form btn-success">Активувати</button>
+        </form>
+    </div>
+
+    <!-- Видалення деактивованих позицій -->
+    <div class="admin-form-container danger-box">
+        <h2>Видалити всі деактивовані позиції</h2>
+        <form action="{{ url_for('delete_positions') }}" method="post" class="admin-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            
+            <div class="checkbox-group">
+                <input type="checkbox" name="confirm_delete" id="confirm_delete_positions" required>
+                <span for="confirm_delete_positions">Ви впевнені, що хочете видалити всі деактивовані позиції?</span>
+            </div>
+
+            <button type="submit" class="btn-form btn-danger">Видалити всі</button>
+        </form>
+    </div>
 {% endblock %}

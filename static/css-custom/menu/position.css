@@ -1,0 +1,211 @@
+/* --- Сторінка конкретної страви --- */
+.position-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 60px;
+    justify-content: center;
+    padding: 60px 40px;
+    position: relative;
+}
+
+/* Фото страви зліва */
+.position-1 {
+    flex: 1 1 400px;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+.position-photo img {
+    width: 400px;
+    height: 400px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+/* Блок купівлі справа */
+.position-buy {
+    flex: 1 1 350px;
+    max-width: 450px;
+    background-color: rgba(255, 255, 255, 0.60);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.position-buy h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.position-buy .price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ff5252;
+}
+
+.position-buy form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.position-buy .form-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.position-buy input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.position-buy input[type="submit"] {
+    background: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.position-buy input[type="submit"]:hover {
+    background: #ffa733;
+    transform: translateY(-2px);
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* відстань між цінами та знижкою */
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #800a0a;
+    font-size: 1.2rem;
+}
+
+.new-price {
+    color: #ff5722;
+    font-size: 1.6rem;
+}
+
+.discount {
+    background-color: #ff9800;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.btn-link {
+    display: inline-block;
+    text-align: center;
+    padding: 10px 20px;
+    background: #008cff;
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+    margin-top: 8px;
+}
+
+.btn-link:hover {
+    color: #fff;
+    background: #33beff;
+    transform: translateY(-2px);
+}
+
+.btn-back {
+    z-index: 10;
+    opacity: 1;
+    margin-top: 20px;
+    display: inline-block;
+    align-self: flex-start;
+    text-align: center;
+    padding: 10px 50px;
+    background-color: #ffa733;
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.btn-back:hover {
+    color: #fff;
+    background: #aa650a;
+    transform: translateY(-2px);
+}
+
+/* Блок інфо під фото */
+.position-info {
+    max-width: 960px;
+    margin: 40px auto;
+    background-color: rgba(255, 255, 255, 0.60);
+    border-radius: 20px;
+    padding: 24px 32px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    font-size: 1rem;
+    color: #2d2d2d;
+    line-height: 1.5;
+}
+
+.tip {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 12px;
+}
+
+/* Фонові зображення */
+.position-bg-coffee {
+    position: absolute;
+    z-index: 0;           /* позаду тексту */
+    pointer-events: none; /* не заважають клікам */
+    opacity: 0.15;
+}
+
+/* Перерозставлені та масштабовані зображення */
+.position-bg1 {
+    top: -120px;
+    left: -150px;
+    width: 450px;
+    height: auto;
+}
+
+.position-bg2 {
+    bottom: -580px;
+    right: 400px;
+    width: 300px;
+    height: auto;
+}
+
+.position-bg3 {
+    top: 10%;
+    right: 50px;
+    width: 350px;
+    height: auto;
+}
+
+.position-bg4 {
+    top: 125%;
+    left: 20%;
+    width: 500px;
+    height: auto;
+    opacity: 0.12;
+    z-index: 1; /* заходить на блок з інфо, але прозоро */
+}

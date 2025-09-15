@@ -1,0 +1,119 @@
+.coupons-title {
+    text-align: center;
+    margin: 2rem 0 1.5rem 0;
+    font-family: "Edu NSW ACT Hand Cursive", cursive;
+    font-size: 2.2rem;
+    color: #944e26;
+}
+
+.coupons-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+}
+
+.coupon-card {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(230, 126, 34, 0.15);
+    padding: 24px 32px;
+    min-width: 320px;
+    max-width: 380px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: center;
+    position: relative;
+    border: 2px solid #ffcc99;
+}
+
+.coupon-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #e67e22;
+    border-bottom: 2px solid #ffd9b3;
+    padding-bottom: 8px;
+}
+
+.coupon-id {
+    font-size: 1.3rem;
+    color: #d35400;
+    font-weight: 800;
+}
+
+.coupon-date {
+    font-size: 1rem;
+    color: #95a5a6;
+    font-weight: 600;
+}
+
+.coupon-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px 0;
+    width: 100%;
+}
+
+.coupon-items li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #ffe6cc;
+    font-size: 1.05rem;
+    transition: background-color 0.2s ease;
+}
+
+.coupon-items li:hover {
+    background-color: rgba(255, 204, 153, 0.1);
+    border-radius: 6px;
+    padding: 8px 6px;
+}
+
+.item-name {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.item-qty {
+    color: #e74c3c;
+    font-weight: 700;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.coupon-actions {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-coupon-details {
+    background: #ff9800;
+    color: #fff;
+    border-radius: 999px;
+    padding: 7px 22px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.btn-coupon-details:hover {
+    background: #ff5722;
+    transform: translateY(-2px);
+}
+
+.no-coupons {
+    text-align: center;
+    color: #888;
+    margin-top: 2rem;
+    font-size: 1.2rem;
+}

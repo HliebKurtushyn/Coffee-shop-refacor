@@ -7,26 +7,11 @@
     <title>{% block title %}The Corner{% endblock title %}</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css-bootstrap/bootstrap.min.css') }}">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/simple_base.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/base_simple.css') }}">
 
     {% block head %}{% endblock head %}
 </head>
 <body class="d-flex flex-column min-vh-100">
-    {% block flash_message %}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="container mt-3">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-    {% endblock %}
-
     {% block btn_back %}
         <a href="{{ url_for('home') }}" class="btn-back">Назад</a>
     {% endblock %}
@@ -34,9 +19,45 @@
     {% block content %}{% endblock %}
 
     <footer class="custom-footer text-center py-3 mt-auto">
-        &copy; {{ current_year }} The Corner
-        <br>
-        Всі фотографії взяті з <a href="https://www.vecteezy.com/free-vector/serving">Serving Vectors by Vecteezy</a>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5 class="footer-title">Контакти</h5>
+                    <p class="mb-1">Адреса: <span class="footer-info">Бровари, вул. Броварська 1</span></p>
+                    <p class="mb-1">Телефон: <span class="footer-info">+380981234567</span></p>
+                    <p class="mb-1">Email: <span class="footer-info">coffee.shop@example.com</span></p>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <h5 class="footer-title">Години роботи</h5>
+                    <p class="mb-1">Понеділок - П'ятниця: <span class="footer-info">8:00 - 20:00</span></p>
+                    <p class="mb-1">Субота - Неділя: <span class="footer-info">9:00 - 22:00</span></p>
+                    <br>
+                    <h5 class="footer-title">Години роботи сторінки</h5>
+                    <p class="mb-1">Понеділок - Неділя: <span class="footer-info">Цілодобово</span></p>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <h5 class="footer-title">Слідкуйте за нами</h5>
+                    <div class="social-links">
+                        <a target="_blank" rel="noopener noreferrer" href="#" class="social-link">Instagram</a>
+                        <a target="_blank" rel="noopener noreferrer" href="#" class="social-link">Facebook</a>
+                        <a target="_blank" rel="noopener noreferrer" href="#" class="social-link">Telegram</a>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="footer-divider">
+            
+            <div class="row">
+                <div class="col-12">
+                    <p class="mb-2">&copy; {{ current_year }} The Corner Coffee Shop</p>
+                    <p class="mb-0 small">
+                        Всі фотографії взяті з <a target="_blank" rel="noopener noreferrer" href="https://www.vecteezy.com/free-vector/serving" class="footer-link">Serving Vectors by Vecteezy</a>
+                    </p>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>

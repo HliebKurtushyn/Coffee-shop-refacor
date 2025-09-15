@@ -3,7 +3,7 @@
 {% block title %}{{ position.name }} - The Corner{% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='custom_styles/position.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css-custom/menu/position.css') }}">
 {% endblock head %}
 
 {% block btn_back %}
@@ -45,11 +45,18 @@
             </div>
             <input type="submit" value="Додати до кошика">
             <a href="{{ url_for('basket') }}" class="btn-link">Переглянути кошик</a>
-            
+
+
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    {% set category, message = messages[0] %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    <div class="container mt-3">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             {% endwith %}
         </form>
