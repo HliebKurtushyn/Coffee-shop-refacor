@@ -13,7 +13,8 @@ import logging
 from logger_setup import setup_logger
 
 
-db_logger = setup_logger("main_db", "app_db.log", level_file=logging.WARNING, level_console=logging.WARNING)
+db_logger = setup_logger("main_db", "app_db.log",
+                         level_file=logging.WARNING, level_console=logging.WARNING)
 logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.dialects").setLevel(logging.WARNING)
@@ -35,7 +36,7 @@ class Base(DeclarativeBase):
 
 class Users(Base, UserMixin):
     __tablename__ = "users"
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(200))
@@ -60,7 +61,7 @@ class Users(Base, UserMixin):
 
 class Menu(Base):
     __tablename__ = "menu"
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True)
     weight: Mapped[str] = mapped_column(String)
@@ -76,7 +77,7 @@ class Menu(Base):
 
 class Coupons(Base):
     __tablename__ = "coupons"
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     order_items: Mapped[dict] = mapped_column(JSONB)
     order_time: Mapped[datetime] = mapped_column(DateTime)
@@ -91,7 +92,8 @@ class Basket(Base):
     __tablename__ = "basket"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey('users.id'), nullable=False)
     menu_id: Mapped[int] = mapped_column(ForeignKey('menu.id'), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
 

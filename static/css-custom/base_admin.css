@@ -38,6 +38,12 @@
     margin: 0;
 }
 
+.back-home {
+    background-color: rgba(41, 128, 185, 0.3) !important;
+    border-left-color: #2980b9 !important;
+    margin-top: 1rem;
+}
+
 .sidebar-nav .nav-link {
     display: block;
     padding: 0.8rem 1.5rem;

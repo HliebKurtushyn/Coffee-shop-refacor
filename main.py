@@ -9,16 +9,8 @@ from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user, LoginManager
 
-from main_db import Menu, Basket, Coupons, SpecialOffer, Session, SpecialOffer, Users, func, joinedload
+from main_db import Menu, Basket, Coupons, SpecialOffer, Session, Users, func, joinedload
 from logger_setup import setup_logger
-
-# Чеклист щоб адаптувати сайт під зміни в коді:
-# - Замінив nickname -> username: Адаптувати всі шаблони і форми (хто взагалі використовує nickname?)
-# - Додати підтримку flash повідомлень в УСІ шаблони
-# - Перевірити всі форми на наявність CSRF токена
-# - Вирізати previous_url звідусіль, де він не потрібен
-
-# - Зробити сторінку оплати як реальну, але без змоги заповнювати дані картки (номер, cvv і т.д.) -> просто кнопка "Оплатити"
 
 # ===== КОНФІГУРАЦІЯ ДОДАТКУ =====
 load_dotenv()
@@ -27,7 +19,8 @@ app = Flask(__name__)
 FILES_PATH = "static/menu"
 
 
-app_logger = setup_logger("main", "app.log", level_file=logging.INFO, level_console=logging.INFO)
+app_logger = setup_logger(
+    "main", "app.log", level_file=logging.INFO, level_console=logging.INFO)
 
 
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
@@ -45,12 +38,16 @@ login_manager.login_view = "login"
 
 # ===== СЛУЖБОВІ ФУНКЦІЇ =====
 # Штуки які треба зробити перед тим, як юзер побачить сторінку і встигне ЩОСЬ (інколи погане) зробити..
+
+
 @app.before_request
 def do_before_request():
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(16)
 
 # Лоадить юзера..
+
+
 @login_manager.user_loader
 def load_user(user_id):
     with Session() as db_session:
@@ -64,7 +61,8 @@ def apply_csp(response):
     nonce = secrets.token_urlsafe(16)
     csp = (
         f"default-src 'self'; "
-        f"script-src 'self' 'nonce-{nonce}'; "
+        f"script-src 'none' "
+        f"obejct-src 'none'; "
         f"style-src 'self'; "
         f"frame-ancestors 'none'; "
         f"base-uri 'self'; "
@@ -74,34 +72,47 @@ def apply_csp(response):
     response.set_cookie("nonce", nonce)
     return response
 
+# Обробник загальних помилок (пізніше зроблю під кожну помилку окремо)
+@app.errorhandler(Exception)
+def handle_error(error):
+    app_logger.error(f"Unhandled error: {str(error)}", exc_info=True)
+    return "Internal server error", 500
+
 
 # ===== ГОЛОВНА СТОРІНКА =====
+@app.route("/")
 @app.route("/home")
-@login_required
 def home():
+    db_session = Session()
+    popular_items = db_session.query(
+        Menu).filter_by(active=True).limit(3).all()
+    db_session.close()
+
     if current_user.is_authenticated:
         with Session() as db_session:
-            user_coupons_count = db_session.query(Coupons).filter_by(user_id=current_user.id).count()
+            user_coupons_count = db_session.query(
+                Coupons).filter_by(user_id=current_user.id).count()
+            offers = db_session.query(SpecialOffer).options(
+                joinedload(SpecialOffer.menu)).filter_by(active=True).all()
 
-            coupons = db_session.query(Coupons).filter_by(user_id=current_user.id).all()
-            for coupon in coupons:
-                pass
-            
-            days_member = (datetime.now() - current_user.created_at).days if hasattr(current_user, 'created_at') else 1
-            
+            days_member = (datetime.now(
+            ) - current_user.created_at).days if hasattr(current_user, 'created_at') else 1
+
             recent_orders = db_session.query(Coupons).filter_by(user_id=current_user.id)\
                 .order_by(Coupons.order_time.desc()).limit(3).all()
 
-        return render_template("home/home.html", 
-                            user=current_user,
-                            user_coupons_count=user_coupons_count,
-                            user_days_member=days_member,
-                            recent_orders=recent_orders,
-                            current_year=datetime.now().year)
-    
-    return render_template("home/welcome.html", 
-                          user=current_user, 
-                          current_year=datetime.now().year)
+        return render_template("home/home.html",
+                               user=current_user,
+                               user_coupons_count=user_coupons_count,
+                               user_days_member=days_member,
+                               recent_orders=recent_orders,
+                               offers=offers,
+                               current_year=datetime.now().year)
+
+    return render_template("home/welcome.html",
+                           user=current_user,
+                           popular_items=popular_items,
+                           current_year=datetime.now().year)
 
 
 # ===== АВТЕНТИФІКАЦІЯ =====
@@ -110,17 +121,17 @@ def home():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("home"))
-    
+
     return render_template("join/register.html",
-                          csrf_token=session["csrf_token"], 
-                          current_year=datetime.now().year)
+                           csrf_token=session["csrf_token"],
+                           current_year=datetime.now().year)
 
 
 @app.post("/register")
 def register_post():
     if request.form.get("csrf_token") != session["csrf_token"]:
         return "Request blocked!", 403
-    
+
     username = request.form["username"]
     email = request.form["email"]
     password = request.form["password"]
@@ -129,20 +140,20 @@ def register_post():
     if len(password) < 8:
         flash("Пароль повинен бути довжиною не менше 8 символів!", "danger")
         return render_template("join/register.html",
-                                csrf_token=session["csrf_token"], 
-                                current_year=datetime.now().year)
-    
+                               csrf_token=session["csrf_token"],
+                               current_year=datetime.now().year)
+
     if email == os.getenv("ADMIN_EMAIL") and username in os.getenv("ADMINS"):
         is_admin = True
-    
+
     with Session() as db_session:
-        if (db_session.query(Users).filter_by(email=email).first() or 
-            db_session.query(Users).filter_by(username=username).first()):
+        if (db_session.query(Users).filter_by(email=email).first() or
+                db_session.query(Users).filter_by(username=username).first()):
             flash("Користувач з таким email або юзернеймом вже існує!", "danger")
             return render_template("join/register.html",
-                                    csrf_token=session["csrf_token"], 
-                                    current_year=datetime.now().year,
-)
+                                   csrf_token=session["csrf_token"],
+                                   current_year=datetime.now().year,
+                                   )
 
         new_user = Users(username=username, email=email, is_admin=is_admin)
         new_user.set_password(password)
@@ -151,7 +162,7 @@ def register_post():
         db_session.refresh(new_user)
 
         login_user(new_user)
-        current_user.created_at = datetime.now()
+        current_user['created_at'] = datetime.now()
 
         return redirect(url_for("home"))
 
@@ -162,15 +173,15 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("home"))
 
-    return render_template("join/login.html",  
-                        current_year=datetime.now().year,
-                        csrf_token=session["csrf_token"])
-                        
+    return render_template("join/login.html",
+                           current_year=datetime.now().year,
+                           csrf_token=session["csrf_token"])
 
 
 @app.post("/login")
 def login_post():
     if request.form.get("csrf_token") != session["csrf_token"]:
+        app_logger.warning(f"CSRF token mismatch in login attempt")
         return "Request blocked!", 403
 
     username = request.form["username"]
@@ -180,11 +191,11 @@ def login_post():
         user = db_session.query(Users).filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            session.permanent = True
+            app_logger.info(f"User {username} logged in successfully")
             return redirect(url_for("home"))
 
+        app_logger.warning(f"Failed login attempt for username: {username}")
         flash("Неправильний юзернейм або пароль!", "danger")
-    
         return redirect(url_for("login"))
 
 
@@ -192,8 +203,8 @@ def login_post():
 @login_required
 def profile():
     return render_template("home/profile.html", user=current_user,
-                        csrf_token=session["csrf_token"],
-                        current_year=datetime.now().year)
+                           csrf_token=session["csrf_token"],
+                           current_year=datetime.now().year)
 
 
 @app.post("/profile")
@@ -208,22 +219,25 @@ def profile_logout():
 
 # ===== МЕНЮ ТА ПРОДУКТИ =====
 @app.route("/menu")
-def menu():    
+def menu():
     with Session() as db_session:
-        offers = db_session.query(SpecialOffer).options(joinedload(SpecialOffer.menu)).filter_by(active=True).all()
-        all_positions = db_session.query(Menu).options(joinedload(Menu.special_offers)).filter_by(active=True).all()
+        offers = db_session.query(SpecialOffer).options(
+            joinedload(SpecialOffer.menu)).filter_by(active=True).all()
+        all_positions = db_session.query(Menu).options(
+            joinedload(Menu.special_offers)).filter_by(active=True).all()
 
-    return render_template("menu/menu.html", all_positions=all_positions, 
-                          offers=offers, user=current_user)
+    return render_template("menu/menu.html", all_positions=all_positions,
+                           offers=offers, user=current_user)
 
 
 @app.get("/position/<name>")
 def position(name):
     with Session() as db_session:
-        position = db_session.query(Menu).options(joinedload(Menu.special_offers)).filter_by(active=True, name=name).first()
-        return render_template("menu/position.html", 
-                            csrf_token=session["csrf_token"], 
-                            position=position)
+        position = db_session.query(Menu).options(joinedload(
+            Menu.special_offers)).filter_by(active=True, name=name).first()
+        return render_template("menu/position.html",
+                               csrf_token=session["csrf_token"],
+                               position=position)
 
 
 @app.post("/position/<name>")
@@ -234,21 +248,24 @@ def position_post(name):
 
     position_name = request.form.get("name")
     position_quantity = request.form.get("quantity")
-    
+
     if not position_name or not position_quantity:
         return "Invalid data! (Potentially a server side problem)", 400
-    
+
     with Session() as db_session:
-        menu_item = db_session.query(Menu).filter_by(name=position_name).first()
+        menu_item = db_session.query(Menu).filter_by(
+            name=position_name).first()
         if not menu_item:
             return "Position is not found! (Potentially a server side problem)", 404
-        
-        total_quantity = db_session.query(func.sum(Basket.quantity)).filter_by(user_id=current_user.id).scalar() or 0
+
+        total_quantity = db_session.query(func.sum(Basket.quantity)).filter_by(
+            user_id=current_user.id).scalar() or 0
 
         if total_quantity + int(position_quantity) > 10:
-            flash(f"В кошику не може бути більше 10 одиниць товару! Лишня кількість: {total_quantity + int(position_quantity) - 10}", "danger")
+            flash(
+                f"В кошику не може бути більше 10 одиниць товару! Лишня кількість: {total_quantity + int(position_quantity) - 10}", "danger")
             return redirect(url_for("position", name=name))
-        
+
         if db_session.query(Basket).filter_by(user_id=current_user.id).count() > 10:
             flash("В кошику не може бути більше 10 позицій!", "danger")
             return redirect(url_for("position", name=name))
@@ -262,19 +279,21 @@ def position_post(name):
         db_session.add(new_basket_item)
         db_session.commit()
         db_session.refresh(new_basket_item)
-        flash(f"Додано {new_basket_item.quantity} шт. {new_basket_item.menu.name} до кошика", "success")
+        flash(
+            f"Додано {new_basket_item.quantity} шт. {new_basket_item.menu.name} до кошика", "success")
         return redirect(url_for("position", name=name))
-    
+
 
 # ===== КОШИК ТА ЗАМОВЛЕННЯ =====
 @app.route("/basket")
 @login_required
 def basket():
     with Session() as db_session:
-        basket_items = db_session.query(Basket).filter_by(user_id=current_user.id).options(joinedload(Basket.menu)).all()
+        basket_items = db_session.query(Basket).filter_by(
+            user_id=current_user.id).options(joinedload(Basket.menu)).all()
         return render_template("orders/basket.html",
-                                csrf_token=session["csrf_token"],
-                                basket=basket_items, user=current_user)
+                               csrf_token=session["csrf_token"],
+                               basket=basket_items, user=current_user)
 
 
 @app.post("/update_quantity")
@@ -282,22 +301,24 @@ def basket():
 def update_quantity():
     if request.form.get("csrf_token") != session["csrf_token"]:
         return "Request blocked!", 403
-    
+
     item_id = request.form.get("item_id")
     quantity = request.form.get("quantity")
 
     with Session() as db_session:
-        basket_item = db_session.query(Basket).filter_by(id=item_id, user_id=current_user.id).options(joinedload(Basket.menu)).first()
+        basket_item = db_session.query(Basket).filter_by(
+            id=item_id, user_id=current_user.id).options(joinedload(Basket.menu)).first()
         if not basket_item:
             return "Елемент кошика не знайдено!", 404
 
         # Підрахунок загальної кількості, враховуючи нову кількість для цього товару
-        other_items_quantity = db_session.query(func.sum(Basket.quantity)).filter(Basket.user_id == current_user.id, Basket.id != basket_item.id).scalar() or 0
+        other_items_quantity = db_session.query(func.sum(Basket.quantity)).filter(
+            Basket.user_id == current_user.id, Basket.id != basket_item.id).scalar() or 0
         new_total_quantity = other_items_quantity + int(quantity)
 
         if new_total_quantity > 10:
             return redirect(url_for("basket"))
-        
+
         if quantity and quantity.isdigit() and int(quantity) > 0:
             basket_item.quantity = int(quantity)
             db_session.commit()
@@ -310,47 +331,53 @@ def update_quantity():
 def remove_from_basket():
     if request.form.get("csrf_token") != session["csrf_token"]:
         return "Request blocked!", 403
-    
+
     item_id = request.form.get("item_id")
 
     with Session() as db_session:
-        basket_item = db_session.query(Basket).filter_by(id=item_id, user_id=current_user.id).options(joinedload(Basket.menu)).first()
+        basket_item = db_session.query(Basket).filter_by(
+            id=item_id, user_id=current_user.id).options(joinedload(Basket.menu)).first()
 
         if not basket_item:
             return "Елемент кошика не знайдено!", 404
-        
+
         db_session.delete(basket_item)
         db_session.commit()
 
         return redirect(url_for("basket"))
-        
+
 
 @app.get("/checkout")
 @login_required
-def checkout_page():    
+def checkout_page():
     with Session() as db_session:
-        basket = db_session.query(Basket).filter_by(user_id=current_user.id).all()
+        basket = db_session.query(Basket).filter_by(
+            user_id=current_user.id).all()
 
-        return render_template("orders/checkout.html", 
-                            csrf_token=session["csrf_token"], 
-                            basket=basket,
-                            total_quantity=sum(item.quantity for item in basket),
-                            total_price=sum(item.menu.price for item in basket))
+        return render_template("orders/checkout.html",
+                               csrf_token=session["csrf_token"],
+                               basket=basket,
+                               total_quantity=sum(
+                                   item.quantity for item in basket),
+                               total_price=sum(item.menu.price for item in basket))
 
 
-@app.post("/checkout")
+@app.post("/checkout") 
 @login_required
 def checkout():
     with Session() as db_session:
         if request.form.get("csrf_token") != session["csrf_token"]:
+            app_logger.warning(f"CSRF token mismatch in checkout for user {current_user.id}")
             return "Request blocked!", 403
 
-        basket_items = db_session.query(Basket).filter_by(user_id=current_user.id).options(joinedload(Basket.menu)).all()
-        
+        basket_items = db_session.query(Basket).filter_by(
+            user_id=current_user.id).options(joinedload(Basket.menu)).all()
+
         if not basket_items:
+            app_logger.info(f"Empty basket checkout attempt by user {current_user.id}")
             flash("Ваш кошик порожній", "danger")
             return redirect(url_for("basket"))
-        
+
         else:
             order_items = {}
             total_price = 0
@@ -364,7 +391,8 @@ def checkout():
                         None
                     )
                     if active_offer:
-                        price = round(price - (price * active_offer.discount / 100), 2)
+                        price = round(
+                            price - (price * active_offer.discount / 100), 2)
                 order_items[item.menu.id] = item.quantity
                 total_price += price * item.quantity
 
@@ -387,10 +415,13 @@ def checkout():
             new_coupon.qr_code_path = qr_path
             db_session.commit()
 
-            db_session.query(Basket).filter_by(user_id=current_user.id).delete()
+            db_session.query(Basket).filter_by(
+                user_id=current_user.id).delete()
             db_session.commit()
-            
-            flash(f"Замовлення оформлено! Загальна сума: {total_price}₴", "success")
+
+            flash(
+                f"Замовлення оформлено! Загальна сума: {total_price}₴", "success")
+            app_logger.info(f"Order {new_coupon.id} created for user {current_user.id}. Total price: {total_price}")
             return redirect(url_for("my_coupons"))
 
 
@@ -398,48 +429,54 @@ def checkout():
 @login_required
 def my_coupons():
     with Session() as db_session:
-        coupons = db_session.query(Coupons).filter_by(user_id=current_user.id).all()
-        
+        coupons = db_session.query(Coupons).filter_by(
+            user_id=current_user.id).all()
+
         all_menu_ids = set()
         for coupon in coupons:
-            all_menu_ids.update([int(menu_id) for menu_id in coupon.order_items.keys()])
+            all_menu_ids.update([int(menu_id)
+                                for menu_id in coupon.order_items.keys()])
 
         menu_items = {}
         if all_menu_ids:
-            menus = db_session.query(Menu).filter(Menu.id.in_(all_menu_ids)).all()
+            menus = db_session.query(Menu).filter(
+                Menu.id.in_(all_menu_ids)).all()
             menu_items = {str(menu.id): menu.name for menu in menus}
-        
-        return render_template("orders/my_coupons.html", 
-                             coupons=coupons, 
-                             menu_items=menu_items,
-                             user=current_user)
-    
+
+        return render_template("orders/my_coupons.html",
+                               coupons=coupons,
+                               menu_items=menu_items,
+                               user=current_user)
+
 
 @app.route("/coupon/<int:coupon_id>")
 @login_required
 def coupon(coupon_id):
     with Session() as db_session:
         # Знаходимо купон
-        order = db_session.query(Coupons).filter_by(id=coupon_id, user_id=current_user.id).first()
+        order = db_session.query(Coupons).filter_by(
+            id=coupon_id, user_id=current_user.id).first()
         if not order:
             return "Купон не знайдено!", 404
-        
+
         # Отримуємо всі menu_id з order_items купона
         all_menu_ids = set()
         if order.order_items:
-            all_menu_ids.update([int(menu_id) for menu_id in order.order_items.keys()])
-        
+            all_menu_ids.update([int(menu_id)
+                                for menu_id in order.order_items.keys()])
+
         # Отримуємо назви позицій меню
         menu_items = {}
         if all_menu_ids:
-            menus = db_session.query(Menu).filter(Menu.id.in_(all_menu_ids)).all()
+            menus = db_session.query(Menu).filter(
+                Menu.id.in_(all_menu_ids)).all()
             menu_items = {str(menu.id): menu.name for menu in menus}
-        
-        return render_template("orders/coupon.html", 
-                             order=order,
-                             menu_items=menu_items,
-                             user=current_user)
-    
+
+        return render_template("orders/coupon.html",
+                               order=order,
+                               menu_items=menu_items,
+                               user=current_user)
+
 
 # ===== АДМІНІСТРУВАННЯ =====
 @app.route("/admin")
@@ -447,7 +484,7 @@ def coupon(coupon_id):
 def admin():
     if not current_user.is_admin:
         return "Замість того щоб пропувати зайти в адмін панель, стань чашкою чаю☕", 418
-    
+
     with Session() as db_session:
         users = db_session.query(Users).all()
 
@@ -458,15 +495,15 @@ def admin():
 def toggle_object_status(object_class, object_id, is_active, success_message, redirect_endpoint):
     if not current_user.is_admin:
         return "Access denied!", 403
-    
+
     if request.form.get("csrf_token") != session["csrf_token"]:
         return "Request blocked!", 403
-    
+
     with Session() as db_session:
         object = db_session.query(object_class).filter_by(id=object_id).first()
         if not object:
             return f"{object_class.__name__} not found!", 404
-        
+
         object.active = is_active
         db_session.commit()
         flash(success_message, "success")
@@ -476,7 +513,7 @@ def toggle_object_status(object_class, object_id, is_active, success_message, re
 def delete_deactivated_objects(object_class, redirect_endpoint):
     if not current_user.is_admin:
         return "Access denied!", 403
-    
+
     if request.form.get("csrf_token") != session["csrf_token"]:
         return "Request blocked!", 403
 
@@ -484,10 +521,11 @@ def delete_deactivated_objects(object_class, redirect_endpoint):
     if confirm_delete != "on":
         flash("Ви повинні підтвердити видалення, поставивши галочку!", "danger")
         return redirect(url_for(redirect_endpoint))
-    
+
     with Session() as db_session:
-        deactivated_objects = db_session.query(object_class).filter_by(active=False).all()
-        
+        deactivated_objects = db_session.query(
+            object_class).filter_by(active=False).all()
+
         for object in deactivated_objects:
             # Для Menu видаляємо файли, для SpecialOffer - ні
             if object_class == Menu:
@@ -495,7 +533,7 @@ def delete_deactivated_objects(object_class, redirect_endpoint):
                 if os.path.exists(file_path):
                     os.remove(file_path)
             db_session.delete(object)
-        
+
         db_session.commit()
         flash(f"Видалення деактивованих об'єктів завершено успішно!", "success")
         return redirect(url_for(redirect_endpoint))
@@ -505,27 +543,30 @@ def delete_deactivated_objects(object_class, redirect_endpoint):
 @login_required
 def add_position():
     if not current_user.is_admin:
+        app_logger.warning(f"Non-admin user {current_user.id} attempted to access add_offer")
         return "Access denied!", 403
 
     with Session() as db_session:
         all_positions = db_session.query(Menu).all()
         active_positions = db_session.query(Menu).filter_by(active=True).all()
-        deactivated_positions = db_session.query(Menu).filter_by(active=False).all()
-        
+        deactivated_positions = db_session.query(
+            Menu).filter_by(active=False).all()
+
         return render_template("admin/add_position.html", csrf_token=session["csrf_token"],
-                        all_positions=all_positions,
-                        active_positions=active_positions,
-                        deactivated_positions=deactivated_positions)
+                               all_positions=all_positions,
+                               active_positions=active_positions,
+                               deactivated_positions=deactivated_positions)
 
 
 @app.post("/add_position/add")
 @login_required
 def add_position_post():
     if not current_user.is_admin:
+        app_logger.warning(f"Non-admin user {current_user.id} attempted to add position")
         return "Access denied!", 403
-    
+
     if request.form.get("csrf_token") != session["csrf_token"]:
-            return "Request blocked!", 403
+        return "Request blocked!", 403
 
     name = request.form["name"]
     file = request.files.get("img")
@@ -548,8 +589,8 @@ def add_position_post():
         with open(output_path, "wb") as f:
             f.write(file.read())
 
-        new_position = Menu(name=name, ingredients=ingredients, 
-                            description=description, price=price, 
+        new_position = Menu(name=name, ingredients=ingredients,
+                            description=description, price=price,
                             weight=weight, file_name=unique_filename)
         db_session.add(new_position)
         db_session.commit()
@@ -564,24 +605,26 @@ def add_position_post():
 def deactivate_position():
     position_id = request.form.get("position_id")
     confirm_delete = request.form.get("confirm_delete")
-    
+
     if confirm_delete != "on":
         flash("Ви повинні підтвердити деактивування, поставивши галочку!", "danger")
         return redirect(url_for("add_position"))
-    
+
     return toggle_object_status(
-        Menu, position_id, False, 
+        Menu, position_id, False,
         "Позицію деактивовано успішно!", "add_position"
     )
+
 
 @app.post("/add_position/activate")
 @login_required
 def activate_position():
     position_id = request.form.get("position_id")
     return toggle_object_status(
-        Menu, position_id, True, 
+        Menu, position_id, True,
         "Позицію активовано успішно!", "add_position"
     )
+
 
 @app.post("/add_position/delete_positions")
 @login_required
@@ -593,16 +636,19 @@ def delete_positions():
 @login_required
 def add_offer():
     if not current_user.is_admin:
+        app_logger.warning(f"Non-admin user {current_user.id} attempted to access add_offer")
         return "Access denied!", 403
 
     with Session() as db_session:
         all_positions = db_session.query(Menu).filter_by(active=True).all()
-        active_offers = db_session.query(SpecialOffer).options(joinedload(SpecialOffer.menu)).filter_by(active=True).all()
-        deactivated_offers = db_session.query(SpecialOffer).options(joinedload(SpecialOffer.menu)).filter_by(active=False).all()
+        active_offers = db_session.query(SpecialOffer).options(
+            joinedload(SpecialOffer.menu)).filter_by(active=True).all()
+        deactivated_offers = db_session.query(SpecialOffer).options(
+            joinedload(SpecialOffer.menu)).filter_by(active=False).all()
 
         return render_template(
-            "admin/add_offer.html", 
-            csrf_token=session["csrf_token"], 
+            "admin/add_offer.html",
+            csrf_token=session["csrf_token"],
             all_positions=all_positions,
             active_offers=active_offers,
             deactivated_offers=deactivated_offers
@@ -613,27 +659,31 @@ def add_offer():
 @login_required
 def add_offer_post():
     if not current_user.is_admin:
+        app_logger.warning(f"Non-admin user {current_user.id} attempted to add offer")
         return "Access denied!", 403
-    
+
     if request.form.get("csrf_token") != session["csrf_token"]:
-        return "Request blocked!", 403 
+        return "Request blocked!", 403
 
     with Session() as db_session:
         menu_id = request.form["menu_id"]
         discount = float(request.form["discount"])
-        expiration_date = datetime.fromisoformat(request.form["expiration_date"])
+        expiration_date = datetime.fromisoformat(
+            request.form["expiration_date"])
         active = "active" in request.form
 
         new_offer = SpecialOffer(
-            menu_id=menu_id, 
-            discount=discount, 
-            expiration_date=expiration_date, 
+            menu_id=menu_id,
+            discount=discount,
+            expiration_date=expiration_date,
             active=active
         )
         db_session.add(new_offer)
         db_session.commit()
-        flash("Пропозицію додано успішно!", "success")
         
+        app_logger.info(f"Admin {current_user.id} added new offer: {menu_id}")
+        flash("Пропозицію додано успішно!", "success")
+
         return redirect(url_for("add_offer"))
 
 
@@ -642,24 +692,26 @@ def add_offer_post():
 def deactivate_offer():
     offer_id = request.form.get("offer_id")
     confirm_delete = request.form.get("confirm_delete")
-    
+
     if confirm_delete != "on":
         flash("Ви повинні підтвердити деактивування, поставивши галочку!", "danger")
         return redirect(url_for("add_offer"))
-    
+
     return toggle_object_status(
-        SpecialOffer, offer_id, False, 
+        SpecialOffer, offer_id, False,
         "Пропозицію деактивовано успішно!", "add_offer"
     )
+
 
 @app.post("/add_offer/activate")
 @login_required
 def activate_offer():
     offer_id = request.form.get("offer_id")
     return toggle_object_status(
-        SpecialOffer, offer_id, True, 
+        SpecialOffer, offer_id, True,
         "Пропозицію активовано успішно!", "add_offer"
     )
+
 
 @app.post("/add_offer/delete_offers")
 @login_required

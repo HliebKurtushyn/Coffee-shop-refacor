@@ -120,3 +120,6 @@ body {
     top: 60%; left: 60px;
 }
 
+.custom-flash-messages {
+    display: none;
+}

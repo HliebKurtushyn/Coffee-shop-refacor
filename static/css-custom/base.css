@@ -168,3 +168,7 @@ body {
     background: radial-gradient(circle at 50% 50%, #d49b6a 60%, #fff7e6 100%);
     top: 60%; left: 60px;
 }
+
+.custom-flash-messages {
+    display: none;
+}

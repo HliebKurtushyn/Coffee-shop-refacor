@@ -8,7 +8,6 @@
 
 {% block content %}
     <div class="container home-container">
-        <!-- Привітання -->
         <div class="welcome-user">
             <h1 class="welcome-title">Вітаємо, {{ user.username }}! 👋</h1>
             <p class="welcome-text">Раді бачити вас знову у The Corner!</p>
@@ -25,7 +24,6 @@
             </div>
         </div>
 
-        <!-- Швидкі дії -->
         <div class="quick-actions">
             <a href="{{ url_for('menu') }}" class="action-card">
                 <div class="action-icon">📖</div>
@@ -52,7 +50,6 @@
             </a>
         </div>
 
-        <!-- Останні замовлення -->
         <div class="recent-orders">
             <h2 class="section-title">Останні замовлення</h2>
             <div class="order-list">
@@ -76,23 +73,27 @@
             </div>
         </div>
 
-        <!-- Спеціальні пропозиції -->
         <div class="special-offers">
             <h2 class="section-title">Спеціальні пропозиції</h2>
             <div class="offers-grid">
-                <div class="offer-card">
-                    <span class="offer-badge">-20%</span>
-                    <h3 class="offer-title">Капучино Deluxe</h3>
-                    <p class="offer-description">Подвійна порція еспресо з вершковою піною</p>
-                    <div class="offer-price">48₴ <small style="text-decoration: line-through; color: #95a5a6;">60₴</small></div>
-                </div>
-
-                <div class="offer-card">
-                    <span class="offer-badge">-15%</span>
-                    <h3 class="offer-title">Лате Арт</h3>
-                    <p class="offer-description">З унікальним дизайном від нашого бариста</p>
-                    <div class="offer-price">51₴ <small style="text-decoration: line-through; color: #95a5a6;">60₴</small></div>
-                </div>
+                {% for offer in offers %}
+                    {% if offer.active %}
+                        <div class="offer-card">
+                            <div class="offer-img-wrapper">
+                                <img class="dish-img" src="{{ url_for('static', filename='menu/' + offer.menu.file_name) }}" alt="{{ offer.menu.name }}">
+                            </div>
+                            <span class="offer-badge">-{{ offer.discount }}%</span>
+                            <h3 class="offer-title">{{ offer.menu.name }}</h3>
+                            <p class="offer-description">{{ offer.menu.description }}</p>
+                            <div class="offer-price">{{ offer.menu.price }}</div>
+                            <div class="offer-new-price">{{ offer.menu.price - (offer.menu.price * offer.discount / 100) | round(0) }}₴</div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="offer-card">
+                        <h3 class="offer-title">Немає активних пропозицій</h3>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

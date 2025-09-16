@@ -13,7 +13,7 @@
 
     {% for item in basket %}
     <div class="basket-item">
-        <img src="{{ url_for('static', filename='menu/{{item.menu.file_name}}') }}" alt="{{item.menu.name}}">
+        <img src="{{ url_for('static', filename='menu/' + item.menu.file_name) }}" alt="{{item.menu.name}}">
         <div class="item-info">
             <h2>{{ item.menu.name }}</h2>
             <p>{{ item.menu.ingredients }}</p>
@@ -33,7 +33,6 @@
                 <p class="price">{{item.menu.price}}₴</p>
             {% endif %}
 
-            <!-- Кнопки зміни кількості -->
             <form action="{{ url_for('update_quantity') }}" method="post" class="quantity-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="item_id" value="{{ item.id }}">
@@ -44,7 +43,6 @@
                 </div>
             </form>
 
-            <!-- Видалення товару -->
             <form action="{{ url_for('remove_from_basket') }}" method="post" style="margin-top: 8px;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="item_id" value="{{ item.id }}">
@@ -53,8 +51,6 @@
         </div>
     </div>
     {% endfor %}
-        
-        <!-- ФОРМА 3: Оформлення замовлення -->
         <a href="{{ url_for('checkout') }}" class="btn checkout-btn">Оформити замовлення</a>
     {% endif %}
 </div>

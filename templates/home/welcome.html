@@ -8,7 +8,6 @@
 
 {% block content %}
     <div class="container welcome-container">
-        <!-- Герой секція -->
         <div class="welcome-hero">
             <h1 class="welcome-title">The Corner</h1>
             <p class="welcome-subtitle">Найсмачніша кава та затишна атмосфера</p>
@@ -19,7 +18,6 @@
             </div>
         </div>
 
-        <!-- Представлення -->
         <div class="hero-section">
             <img src="{{ url_for('static', filename='images/cup_of_coffee.png') }}" alt="Чашка кави" class="hero-image">
             <p class="hero-text">
@@ -28,37 +26,25 @@
             </p>
         </div>
 
-        <!-- Популярні позиції -->
         <div class="popular-section">
             <h2 class="section-title">Популярні позиції</h2>
             <div class="popular-items">
-                <!-- Приклад позиції 1 -->
-                <div class="popular-item">
-                    <img src="{{ url_for('static', filename='menu/espresso.png') }}" alt="Еспресо" class="item-image">
-                    <h3 class="item-name">Еспресо</h3>
-                    <p class="item-price">45₴</p>
-                    <p class="item-description">Класичний міцний еспресо з багатим смаком</p>
-                </div>
-
-                <!-- Приклад позиції 2 -->
-                <div class="popular-item">
-                    <img src="{{ url_for('static', filename='menu/cappuccino.png') }}" alt="Капучино" class="item-image">
-                    <h3 class="item-name">Капучино</h3>
-                    <p class="item-price">55₴</p>
-                    <p class="item-description">Ніжна кава з молочною піною та унікальним дизайном</p>
-                </div>
-
-                <!-- Приклад позиції 3 -->
-                <div class="popular-item">
-                    <img src="{{ url_for('static', filename='menu/latte_macchiato.png') }}" alt="Лате" class="item-image">
-                    <h3 class="item-name">Лате</h3>
-                    <p class="item-price">60₴</p>
-                    <p class="item-description">М'яка кава з великою кількістю зігрітого молока</p>
-                </div>
+                {% for menu_item in popular_items %}
+                    <div class="popular-item">
+                        <img src="{{ url_for('static', filename='menu/' + menu_item.file_name) }}" alt="{{ menu_item.name }}" class="item-image">
+                        <h3 class="item-name">{{ menu_item.name }}</h3>
+                        <p class="item-price">{{ menu_item.price }}₴</p>
+                        <p class="item-description">{{ menu_item.description[:100] }}{% if menu_item.description|length > 100 %}...{% endif %}</p>
+                        <a href="{{ url_for('position', name=menu_item.name) }}" class="welcome-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Детальніше</a>
+                    </div>
+                {% else %}
+                    <div class="popular-item">
+                        <p class="item-name">Наразі немає популярних позицій</p>
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
-        <!-- Переваги -->
         <div class="features-section">
             <h2 class="section-title">Чому обирають нас?</h2>
             <div class="features-grid">

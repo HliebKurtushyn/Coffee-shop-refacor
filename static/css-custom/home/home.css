@@ -212,6 +212,30 @@
     font-weight: 700;
 }
 
+.offer-new-price {
+    text-decoration: line-through;
+    color: #800a0a;
+    font-size: 0.9rem;
+}
+
+.dish-img-wrapper {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    border: 6px solid #ff5252;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+}
+
+.dish-img {
+    width: 20vh;
+    height:20vh;
+    object-fit: cover;
+}
+
 /* Анімації */
 @keyframes slideIn {
     from {
