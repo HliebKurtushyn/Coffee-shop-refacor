@@ -1,4 +1,3 @@
-/* Стилі для головної сторінки гостей */
 .welcome-container {
     min-height: 80vh;
     display: flex;
@@ -62,7 +61,6 @@
     box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
 }
 
-/* Секція представлення */
 .hero-section {
     background: linear-gradient(135deg, rgba(232, 179, 116, 0.1) 0%, rgba(255, 245, 230, 0.3) 100%);
     border-radius: 20px;
@@ -87,7 +85,6 @@
     margin-bottom: 2rem;
 }
 
-/* Секція популярних позицій */
 .popular-section {
     margin: 3rem 0;
 }
@@ -148,7 +145,6 @@
     font-size: 0.95rem;
 }
 
-/* Переваги */
 .features-section {
     background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
     padding: 3rem 0;
@@ -185,7 +181,6 @@
     font-size: 0.95rem;
 }
 
-/* Анімації */
 @keyframes fadeIn {
     from {
         opacity: 0;

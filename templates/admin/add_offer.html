@@ -9,7 +9,6 @@
 {% block content %}
     <h1>Управління пропозиціями</h1>
 
-    <!-- Додавання нової пропозиції -->
     <div class="admin-form-container">
         <h2>Додавання нової пропозиції</h2>
         <form method="post" action="{{ url_for('add_offer_post') }}" enctype="multipart/form-data" class="admin-form">
@@ -43,7 +42,6 @@
         </form>
     </div>
 
-    <!-- Деактивація пропозиції -->
     <div class="admin-form-container warning-box">
         <h2>Деактивація пропозиції</h2>
         <form action="{{ url_for('deactivate_offer') }}" method="post" class="admin-form">
@@ -67,7 +65,6 @@
         </form>
     </div>
 
-    <!-- Активація пропозиції -->
     <div class="admin-form-container success-box">
         <h2>Активація пропозиції</h2>
         <form action="{{ url_for('activate_offer') }}" method="post" class="admin-form">
@@ -86,7 +83,6 @@
         </form>
     </div>
 
-    <!-- Видалення деактивованих пропозицій -->
     <div class="admin-form-container danger-box">
         <h2>Видалити всі деактивовані пропозиції</h2>
         <form action="{{ url_for('delete_offers') }}" method="post" class="admin-form">

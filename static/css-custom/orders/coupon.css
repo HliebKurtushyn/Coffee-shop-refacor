@@ -1,4 +1,3 @@
-/* Стилі для сторінки деталей замовлення */
 .coupons-title {
     text-align: center;
     color: #2c3e50;
@@ -104,7 +103,6 @@
     border: 1px solid rgba(231, 76, 60, 0.3);
 }
 
-/* Стилі для QR-коду */
 .qr-container {
     text-align: center;
     margin: 2rem 0 1rem;

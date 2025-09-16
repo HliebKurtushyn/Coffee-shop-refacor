@@ -37,17 +37,13 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 # ===== СЛУЖБОВІ ФУНКЦІЇ =====
-# Штуки які треба зробити перед тим, як юзер побачить сторінку і встигне ЩОСЬ (інколи погане) зробити..
-
-
+# Штуки які треба зробити перед тим, як юзер побачить сторінку
 @app.before_request
 def do_before_request():
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(16)
 
 # Лоадить юзера..
-
-
 @login_manager.user_loader
 def load_user(user_id):
     with Session() as db_session:
@@ -116,7 +112,6 @@ def home():
 
 
 # ===== АВТЕНТИФІКАЦІЯ =====
-# Замінив nickname -> username: Адаптувати всі шаблони і форми
 @app.get("/register")
 def register():
     if current_user.is_authenticated:
@@ -167,7 +162,6 @@ def register_post():
         return redirect(url_for("home"))
 
 
-# Замінив nickname -> username: Адаптувати всі шаблони і форми
 @app.get("/login")
 def login():
     if current_user.is_authenticated:
@@ -311,7 +305,6 @@ def update_quantity():
         if not basket_item:
             return "Елемент кошика не знайдено!", 404
 
-        # Підрахунок загальної кількості, враховуючи нову кількість для цього товару
         other_items_quantity = db_session.query(func.sum(Basket.quantity)).filter(
             Basket.user_id == current_user.id, Basket.id != basket_item.id).scalar() or 0
         new_total_quantity = other_items_quantity + int(quantity)
@@ -453,19 +446,16 @@ def my_coupons():
 @login_required
 def coupon(coupon_id):
     with Session() as db_session:
-        # Знаходимо купон
         order = db_session.query(Coupons).filter_by(
             id=coupon_id, user_id=current_user.id).first()
         if not order:
             return "Купон не знайдено!", 404
 
-        # Отримуємо всі menu_id з order_items купона
         all_menu_ids = set()
         if order.order_items:
             all_menu_ids.update([int(menu_id)
                                 for menu_id in order.order_items.keys()])
 
-        # Отримуємо назви позицій меню
         menu_items = {}
         if all_menu_ids:
             menus = db_session.query(Menu).filter(
@@ -490,7 +480,7 @@ def admin():
 
     return render_template("admin/admin_dashboard.html", users=users)
 
-# = ФУНКЦІЇ ДЛЯ КЕРУВАННЯ ОБ'ЄКТАМИ =
+# ===== ФУНКЦІЇ ДЛЯ КЕРУВАННЯ ОБ'ЄКТАМИ =====
 # *Для уникнення дублювання коду
 def toggle_object_status(object_class, object_id, is_active, success_message, redirect_endpoint):
     if not current_user.is_admin:
@@ -527,7 +517,6 @@ def delete_deactivated_objects(object_class, redirect_endpoint):
             object_class).filter_by(active=False).all()
 
         for object in deactivated_objects:
-            # Для Menu видаляємо файли, для SpecialOffer - ні
             if object_class == Menu:
                 file_path = os.path.join(FILES_PATH, object.file_name)
                 if os.path.exists(file_path):
@@ -538,7 +527,7 @@ def delete_deactivated_objects(object_class, redirect_endpoint):
         flash(f"Видалення деактивованих об'єктів завершено успішно!", "success")
         return redirect(url_for(redirect_endpoint))
 
-# = ПОЗИЦІЇ =
+# ===== ПОЗИЦІЇ =====
 @app.get("/add_position")
 @login_required
 def add_position():
@@ -631,7 +620,7 @@ def activate_position():
 def delete_positions():
     return delete_deactivated_objects(Menu, "add_position")
 
-# = ПРОПОЗИЦІЇ ==
+# ===== ПРОПОЗИЦІЇ =====
 @app.get("/add_offer")
 @login_required
 def add_offer():

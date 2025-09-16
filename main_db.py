@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
 from flask_login import UserMixin
 from dotenv import load_dotenv
-import bcrypt  # pip install bcrypt
+import bcrypt 
 import os
 import logging
 

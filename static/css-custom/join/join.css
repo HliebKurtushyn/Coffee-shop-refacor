@@ -1,9 +1,7 @@
-/* Центрування форми */
 .flex-grow-1 > .d-flex {
     height: 100vh;
 }
 
-/* Форма */
 .login-form {
     display: block;
     width: 100%;
@@ -22,7 +20,6 @@
     box-shadow: 0 12px 40px rgba(212, 155, 106, 0.22), 0 2px 12px rgba(255, 179, 102, 0.15);
 }
 
-/* Інпути */
 .custom-input {
     border-radius: 999px;
     width: 100%;
@@ -40,7 +37,6 @@
     outline: none;
 }
 
-/* Кнопка */
 .btn-primary {
     background: linear-gradient(90deg, #ffb366 0%, #d49b6a 100%);
     border: none;
@@ -56,7 +52,6 @@
     box-shadow: 0 4px 16px rgba(255, 179, 102, 0.18);
 }
 
-/* Алерт */
 .alert {
     border-radius: 12px;
     font-size: 1rem;

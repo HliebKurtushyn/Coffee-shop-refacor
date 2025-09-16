@@ -1,4 +1,4 @@
-/* Стилі для форм адмінки */
+
 .admin-form-container {
     background: white;
     padding: 2rem;
@@ -16,7 +16,6 @@
     padding-bottom: 0.5rem;
 }
 
-/* Загальні стилі для форм */
 .admin-form {
     display: flex;
     flex-direction: column;
@@ -46,7 +45,6 @@
     outline: none;
 }
 
-/* Чекбокси */
 .checkbox-group {
     display: flex;
     align-items: center;
@@ -66,7 +64,6 @@
     font-weight: 500;
 }
 
-/* Кнопки */
 .btn-form {
     background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
     color: white;
@@ -107,7 +104,6 @@
     box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
 }
 
-/* Групи полів */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -120,7 +116,6 @@
     margin-bottom: 0.3rem;
 }
 
-/* Спеціальні стилі для деактивації/активації */
 .warning-box {
     background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
     border: 2px solid #ffc107;
@@ -145,7 +140,6 @@
     margin: 1rem 0;
 }
 
-/* Адаптивність */
 @media (max-width: 768px) {
     .admin-form-container {
         padding: 1.5rem;

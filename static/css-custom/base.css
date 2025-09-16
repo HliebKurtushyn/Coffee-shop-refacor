@@ -146,7 +146,6 @@ body {
     text-decoration: none;
 }
 
-/* Декоративні круги */
 .bg-circle {
     position: absolute;
     border-radius: 50%;

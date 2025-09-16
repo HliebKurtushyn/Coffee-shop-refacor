@@ -1,4 +1,3 @@
-/* --- Сторінка конкретної страви --- */
 .position-container {
     display: flex;
     flex-wrap: wrap;
@@ -8,7 +7,6 @@
     position: relative;
 }
 
-/* Фото страви зліва */
 .position-1 {
     flex: 1 1 400px;
     max-width: 500px;
@@ -23,7 +21,6 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 
-/* Блок купівлі справа */
 .position-buy {
     flex: 1 1 350px;
     max-width: 450px;
@@ -88,7 +85,7 @@
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 12px; /* відстань між цінами та знижкою */
+    gap: 12px;
 }
 
 .old-price {
@@ -152,7 +149,6 @@
     transform: translateY(-2px);
 }
 
-/* Блок інфо під фото */
 .position-info {
     max-width: 960px;
     margin: 40px auto;
@@ -171,15 +167,13 @@
     margin-top: 12px;
 }
 
-/* Фонові зображення */
 .position-bg-coffee {
     position: absolute;
-    z-index: 0;           /* позаду тексту */
-    pointer-events: none; /* не заважають клікам */
+    z-index: 0;
+    pointer-events: none;
     opacity: 0.15;
 }
 
-/* Перерозставлені та масштабовані зображення */
 .position-bg1 {
     top: -120px;
     left: -150px;
@@ -207,5 +201,5 @@
     width: 500px;
     height: auto;
     opacity: 0.12;
-    z-index: 1; /* заходить на блок з інфо, але прозоро */
+    z-index: 1;
 }

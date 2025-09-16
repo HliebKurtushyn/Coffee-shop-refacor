@@ -9,7 +9,6 @@
 {% block content %}
     <h1>Управління позиціями меню</h1>
 
-    <!-- Додавання нової позиції -->
     <div class="admin-form-container">
         <h2>Додавання нової позиції</h2>
         <form action="{{ url_for('add_position_post') }}" method="post" enctype="multipart/form-data" class="admin-form">
@@ -49,7 +48,6 @@
         </form>
     </div>
 
-    <!-- Деактивація позицій -->
     <div class="admin-form-container warning-box">
         <h2>Деактивація позицій</h2>
         <form action="{{ url_for('deactivate_position') }}" method="post" class="admin-form">
@@ -73,7 +71,6 @@
         </form>
     </div>
 
-    <!-- Активація позицій -->
     <div class="admin-form-container success-box">
         <h2>Активація позицій</h2>
         <form action="{{ url_for('activate_position') }}" method="post" class="admin-form">
@@ -92,7 +89,6 @@
         </form>
     </div>
 
-    <!-- Видалення деактивованих позицій -->
     <div class="admin-form-container danger-box">
         <h2>Видалити всі деактивовані позиції</h2>
         <form action="{{ url_for('delete_positions') }}" method="post" class="admin-form">
